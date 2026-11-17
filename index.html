@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="雲朵茶會：喵境 MEOWONDERLAND 製作的夢幻系電商示範商店。">
+<title>雲朵茶會示範商店</title>
+<style>html{color-scheme:light}body{margin:0}img{max-width:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+</head>
+<body>
+<style>
+/* Layout: mobile-first tea-party shop; 2-col menu on phone, 3-col on desktop; teacup cart tray + 3-step checkout ending in an invitation card */
+:root {
+  --bg: #F6F0FA;
+  --surface: #FFFFFF;
+  --ink: #3A2846;
+  --muted: #6E5A7C;
+  --rose: #E7A9C0;
+  --rose-deep: #B4476F;
+  --gold: #B88A2E;
+  --line: #E4D8EC;
+  --tea: #D9A066;
+  --paper: #FFFBF3;
+  --glow: rgba(231, 169, 192, 0.55);
+  --display: "Noto Serif TC", "Noto Serif CJK TC", "Songti TC", "PMingLiU", serif;
+  --body: "Noto Sans TC", "Noto Sans CJK TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1C1626; --surface: #2A2137; --ink: #F3EAF6; --muted: #C7B6D3;
+    --rose: #E7A9C0; --rose-deep: #F0A6C2; --gold: #E2BE6A; --line: #3E3250;
+    --tea: #E2B07A; --paper: #2F2540; --glow: rgba(231, 169, 192, 0.35); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1C1626; --surface: #2A2137; --ink: #F3EAF6; --muted: #C7B6D3;
+  --rose: #E7A9C0; --rose-deep: #F0A6C2; --gold: #E2BE6A; --line: #3E3250;
+  --tea: #E2B07A; --paper: #2F2540; --glow: rgba(231, 169, 192, 0.35); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+.ribbon { background: var(--ink); color: var(--bg); font-size: 13px; text-align: center; padding-block: 6px; }
+
+header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+header .wrap { display: flex; align-items: center; justify-content: space-between; padding-block: 10px; gap: 12px; }
+.logo { font-family: var(--display); font-weight: 700; font-size: 22px; letter-spacing: 2px; }
+.logo small { display: block; font-family: var(--body); font-weight: 400; font-size: 11px; letter-spacing: 3px; color: var(--muted); }
+
+/* Teacup cart */
+.cup-btn { display: flex; align-items: center; gap: 6px; min-height: 52px; padding: 0 12px 0 8px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); }
+.cup-btn svg { width: 44px; height: 40px; overflow: visible; }
+.cup-btn .label { font-size: 14px; font-weight: 700; }
+.cup-btn .label span { display: block; font-size: 12px; font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
+#teaLevel { transition: y .5s ease, height .5s ease; }
+.cup-btn.bump svg { animation: bump .45s ease; }
+@keyframes bump { 40% { transform: translateY(-4px) rotate(-6deg); } }
+.steam { stroke: var(--muted); stroke-width: 2; fill: none; stroke-linecap: round; opacity: 0; }
+.cup-btn.full .steam { opacity: .7; animation: steam 2.4s ease-in-out infinite; }
+@keyframes steam { 50% { transform: translateY(-3px); opacity: .25; } }
+.flyer { position: fixed; z-index: 40; width: 28px; height: 28px; border-radius: 50%; pointer-events: none; box-shadow: 0 0 12px 3px var(--glow); transition: transform .6s cubic-bezier(.5,-.3,.6,1), opacity .6s ease; }
+
+.hero { padding-block: 36px 24px; display: grid; gap: 14px; }
+.hero p.eyebrow { margin: 0; color: var(--gold); letter-spacing: 4px; font-size: 13px; }
+.hero h1 { font-size: clamp(32px, 7vw, 56px); line-height: 1.25; }
+.hero p.lead { margin: 0; color: var(--muted); max-width: 34em; }
+
+.menu-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-block: 8px 4px; }
+.menu-head h2 { font-size: 22px; }
+.menu-head span { color: var(--muted); font-size: 13px; letter-spacing: 2px; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; padding-block: 12px 40px; }
+@media (min-width: 760px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; } }
+.card { background: var(--surface); border-radius: 22px; padding: 10px 10px 14px; display: flex; flex-direction: column; gap: 6px; transition: transform .25s ease, box-shadow .25s ease; }
+@media (hover: hover) { .card:hover { transform: translateY(-6px); box-shadow: 0 14px 30px -12px var(--glow), 0 0 0 2px var(--rose); } }
+.art { aspect-ratio: 1 / 1; max-width: 100%; border-radius: 16px; display: grid; place-items: center; overflow: hidden; }
+.art svg { width: 82%; height: 82%; }
+.card h3 { font-size: 16px; line-height: 1.4; margin-top: 4px; }
+.card .story { margin: 0; font-size: 13px; color: var(--ink); line-height: 1.55; }
+.card .note { margin: 0; font-size: 12px; color: var(--muted); }
+.card .disclaimer { color: var(--rose-deep); font-size: 12px; line-height: 1.5; margin: 0; }
+.card .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; padding-top: 4px; flex-wrap: wrap; }
+.price { font-variant-numeric: tabular-nums; font-weight: 700; }
+.add { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 0; background: var(--rose); color: #3A2846; font-weight: 700; transition: box-shadow .2s ease; }
+.add:hover { box-shadow: 0 0 16px 4px var(--glow); }
+.add.done { background: var(--ink); color: var(--bg); }
+
+.proof { border-top: 1px solid var(--line); padding-block: 28px 48px; display: grid; gap: 16px; }
+.proof h2 { font-size: 22px; }
+.proof ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.proof li { background: var(--surface); border-radius: 16px; padding: 16px; }
+.proof li b { display: block; font-family: var(--display); font-size: 20px; color: var(--rose-deep); }
+.proof li span { font-size: 14px; color: var(--muted); }
+.donate { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 28px; border-radius: 999px; background: var(--rose); color: #3A2846; font-weight: 700; font-size: 17px; text-decoration: none; transition: box-shadow .2s ease; }
+.donate:hover { box-shadow: 0 0 18px 5px var(--glow); }
+.donate-box { background: var(--surface); border-radius: 20px; padding: 20px; display: grid; gap: 12px; justify-items: start; }
+.donate-box p { margin: 0; color: var(--muted); font-size: 14px; }
+footer { color: var(--muted); font-size: 13px; padding-block: 24px 40px; border-top: 1px solid var(--line); }
+
+/* Tray drawer & checkout */
+.scrim { position: fixed; inset: 0; background: rgba(28, 22, 38, .45); z-index: 20; }
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(420px, 100%); background: var(--bg); z-index: 21; display: flex; flex-direction: column; padding: calc(16px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) 16px; gap: 12px; }
+.drawer-head, .co-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.drawer-head p { margin: 0; font-size: 13px; color: var(--muted); }
+.icon-btn { width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); font-size: 20px; line-height: 1; }
+.lines { flex: 1; overflow-y: auto; display: grid; align-content: start; gap: 10px; }
+.line { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 12px; align-items: center; background: var(--surface); border-radius: 16px; padding: 10px; }
+.line .art { width: 56px; border-radius: 12px; }
+.line .name { font-size: 14px; font-weight: 700; }
+.line .sub { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.qty { display: flex; align-items: center; gap: 4px; }
+.qty button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); }
+.qty span { min-width: 20px; text-align: center; font-variant-numeric: tabular-nums; }
+.empty { color: var(--muted); text-align: center; padding: 40px 0; }
+.total { display: flex; justify-content: space-between; font-weight: 700; font-variant-numeric: tabular-nums; font-size: 18px; }
+.primary { min-height: 52px; width: 100%; border-radius: 999px; border: 0; background: var(--ink); color: var(--bg); font-weight: 700; font-size: 17px; }
+.primary:disabled { opacity: .4; cursor: not-allowed; }
+.ghost { min-height: 52px; width: 100%; border-radius: 999px; border: 1.5px solid var(--ink); background: transparent; font-weight: 700; }
+
+.checkout { position: fixed; inset: 0; z-index: 30; background: var(--bg); overflow-y: auto; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.co-inner { max-width: 560px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 16px 40px; display: grid; gap: 20px; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.steps li { text-align: center; font-size: 13px; color: var(--muted); display: grid; gap: 6px; justify-items: center; }
+.steps li i { font-style: normal; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--line); font-weight: 700; }
+.steps li.on { color: var(--ink); font-weight: 700; }
+.steps li.on i { background: var(--rose); border-color: var(--rose); color: #3A2846; }
+.steps li.ok i { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+.panel { background: var(--surface); border-radius: 20px; padding: 18px; display: grid; gap: 14px; }
+.panel h2 { font-size: 20px; }
+.field { display: grid; gap: 6px; }
+.field label { font-size: 14px; font-weight: 700; }
+.field input { min-height: 48px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--bg); color: var(--ink); padding: 0 14px; font: inherit; }
+.choice { display: grid; gap: 10px; border: 0; padding: 0; margin: 0; }
+.choice legend { font-size: 14px; font-weight: 700; padding: 0; margin-bottom: 6px; }
+.choice label { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 14px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--bg); }
+.choice label:has(input:checked) { border-color: var(--rose-deep); }
+.choice label span { flex: 1; }
+.choice input { width: 20px; height: 20px; accent-color: var(--rose-deep); }
+.hint { margin: 0; font-size: 13px; color: var(--muted); }
+.sum-row { display: flex; justify-content: space-between; gap: 12px; font-variant-numeric: tabular-nums; }
+.sum-row.big { font-weight: 700; font-size: 18px; border-top: 1px solid var(--line); padding-top: 12px; }
+.err { color: var(--rose-deep); font-size: 14px; margin: 0; }
+
+/* Invitation */
+.done-wrap { display: grid; gap: 16px; justify-items: center; text-align: center; }
+.invite { position: relative; width: 100%; background: var(--paper); border-radius: 6px; padding: 40px 22px 26px; box-shadow: 0 18px 40px -20px var(--glow); outline: 1.5px solid var(--gold); outline-offset: -10px; display: grid; gap: 12px; text-align: center; animation: unfold .7s ease both; }
+@keyframes unfold { from { transform: translateY(16px) scale(.97); opacity: 0; } }
+.invite .seal { position: absolute; left: 50%; top: -30px; transform: translateX(-50%); width: 64px; height: 64px; }
+.invite .kicker { margin: 0; font-size: 12px; letter-spacing: 6px; color: var(--gold); }
+.invite h2 { font-size: 26px; line-height: 1.4; }
+.invite .guest { font-family: var(--display); font-size: 20px; color: var(--rose-deep); }
+.invite .when { margin: 0; color: var(--muted); font-size: 14px; }
+.invite .divider { height: 1px; background: var(--gold); opacity: .5; margin: 6px 20px; }
+.invite .no { font-variant-numeric: tabular-nums; letter-spacing: 2px; font-weight: 700; font-size: 18px; }
+.invite .detail { text-align: left; display: grid; gap: 8px; font-size: 14px; }
+.invite .detail h3 { font-size: 14px; color: var(--gold); letter-spacing: 3px; }
+.tag { font-size: 12px; padding: 2px 10px; border-radius: 999px; background: var(--rose); color: #3A2846; font-weight: 700; }
+.stat { font-family: var(--display); font-size: 36px; color: var(--rose-deep); font-variant-numeric: tabular-nums; line-height: 1.2; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+</style>
+
+<div class="ribbon"><div class="wrap">這是喵境製作的示範商店，商品與訂單都是示範，不會出貨也不會收款。</div></div>
+
+<header>
+  <div class="wrap">
+    <div class="logo">雲朵茶會<small>CLOUD TEA PARTY</small></div>
+    <button class="cup-btn" id="openCart" type="button" aria-label="打開茶盤">
+      <svg viewBox="0 0 48 44" aria-hidden="true">
+        <defs><clipPath id="cupClip"><path d="M8 14 H36 Q35 34 22 36 Q9 34 8 14 Z"></path></clipPath></defs>
+        <path class="steam" d="M17 9 q-3 -3 0 -6"></path>
+        <path class="steam" d="M24 9 q-3 -3 0 -6"></path>
+        <rect id="teaLevel" x="6" y="36" width="32" height="0" fill="var(--tea)" clip-path="url(#cupClip)"></rect>
+        <path d="M8 14 H36 Q35 34 22 36 Q9 34 8 14 Z" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round"></path>
+        <path d="M36 18 Q44 18 42 25 Q40 30 34 29" fill="none" stroke="var(--ink)" stroke-width="2.4"></path>
+        <path d="M4 40 H40" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"></path>
+      </svg>
+      <span class="label">茶盤<span id="badge" aria-live="polite">0 樣</span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="wrap hero">
+    <p class="eyebrow">甜點 ・ 香氛 ・ 午後三點</p>
+    <h1>歡迎來到<br>雲朵上的茶會</h1>
+    <p class="lead">每到午後三點，雲朵上就會擺起一張長桌。把喜歡的甜點和香氛放上你的茶盤，茶杯會一點一點裝滿。結帳只要三步。</p>
+  </section>
+
+  <section class="wrap" aria-label="今日茶會菜單">
+    <div class="menu-head"><h2>今日茶會菜單</h2><span>MENU ・ 6 ITEMS</span></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="wrap proof" aria-label="這間店的好買設計">
+    <h2>這間店怎麼做到「好看，也好買」</h2>
+    <ul>
+      <li><b>手機優先</b><span>先排好手機版，再放大到電腦。按鈕都夠大，拇指一按就中。</span></li>
+      <li><b>結帳 3 步</b><span>整理茶盤、送去哪裡、確認邀請函。不用先註冊會員。</span></li>
+      <li><b>打開不用等</b><span>甜點插圖用程式畫成，不載入外部圖片和字型，手機網路慢也能很快打開。</span></li>
+    </ul>
+    <div class="donate-box">
+      <h2>喜歡這間示範店嗎？</h2>
+      <p>商品都是虛構的，但你可以請貓麗絲喝杯茶。按下按鈕會開啟綠界的抖內頁面。</p>
+      <a class="donate" href="https://p.ecpay.com.tw/3655636" target="_blank" rel="noopener">抖內 10 塊給貓麗絲 ♡</a>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">示範商店由 喵境 MEOWONDERLAND 設計製作 ・ IG @meowonderlandcatlice</div></footer>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" hidden aria-label="你的茶盤">
+  <div class="drawer-head">
+    <div><h2>你的茶盤</h2><p>放上桌的甜點和香氛</p></div>
+    <button class="icon-btn" id="closeCart" type="button" aria-label="關閉茶盤">×</button>
+  </div>
+  <div class="lines" id="lines"></div>
+  <div class="total"><span>小計</span><span id="subtotal">NT$0</span></div>
+  <button class="primary" id="toCheckout" type="button">前往結帳</button>
+</aside>
+
+<section class="checkout" id="checkout" hidden aria-label="結帳">
+  <div class="co-inner">
+    <div class="co-head">
+      <h2>結帳</h2>
+      <button class="icon-btn" id="closeCo" type="button" aria-label="離開結帳，回到商店">×</button>
+    </div>
+    <ol class="steps" id="steps">
+      <li><i>1</i>整理茶盤</li>
+      <li><i>2</i>送去哪裡</li>
+      <li><i>3</i>確認邀請函</li>
+    </ol>
+
+    <div id="step1" class="panel">
+      <h2>整理你的茶盤</h2>
+      <div id="coLines" class="lines"></div>
+      <div class="total"><span>小計</span><span id="coSubtotal">NT$0</span></div>
+      <button class="primary" id="next1" type="button">下一步：送去哪裡</button>
+    </div>
+
+    <form id="step2" class="panel" hidden novalidate>
+      <h2>要送去哪裡？</h2>
+      <p class="hint">示範用，已幫你填好範例資料，直接按下一步就可以。</p>
+      <div class="field"><label for="f-name">收件人姓名</label><input id="f-name" autocomplete="off" value="王小雲"></div>
+      <div class="field"><label for="f-phone">手機號碼</label><input id="f-phone" inputmode="numeric" autocomplete="off" value="0912345678"></div>
+      <fieldset class="choice">
+        <legend>取貨方式</legend>
+        <label><input type="radio" name="ship" id="ship-store" value="store" checked><span>超商取貨</span><span>NT$0</span></label>
+        <label><input type="radio" name="ship" id="ship-home" value="home"><span>宅配到府</span><span>NT$0</span></label>
+      </fieldset>
+      <fieldset class="choice">
+        <legend>付款方式</legend>
+        <label><input type="radio" name="pay" id="pay-cod" value="cod" checked><span>取貨時付款</span></label>
+        <label><input type="radio" name="pay" id="pay-atm" value="atm"><span>ATM 轉帳</span></label>
+      </fieldset>
+      <p class="err" id="err" hidden>請填寫收件人姓名和 10 碼手機號碼。</p>
+      <button class="primary" type="submit">下一步：確認邀請函</button>
+      <button class="ghost" type="button" id="back2">回上一步</button>
+    </form>
+
+    <div id="step3" class="panel" hidden>
+      <h2>確認邀請函內容</h2>
+      <div id="summary" style="display: grid; gap: 8px"></div>
+      <button class="primary" id="place" type="button">送出訂單（示範）</button>
+      <button class="ghost" type="button" id="back3">回上一步</button>
+    </div>
+
+    <div id="done" class="done-wrap" hidden>
+      <div class="invite" id="invite"></div>
+      <div><div class="stat">3 步</div><p class="hint">從茶盤到收下邀請函，你剛剛只走了這麼幾步。</p></div>
+      <p class="hint">這筆訂單不會收款。如果想支持貓麗絲，可以到綠界抖內頁面：</p>
+      <a class="donate" href="https://p.ecpay.com.tw/3655636" target="_blank" rel="noopener">抖內 10 塊給貓麗絲 ♡</a>
+      <button class="primary" id="again" type="button">回到茶會</button>
+    </div>
+  </div>
+</section>
+
+<script>
+const ART = {
+  macaron: `<svg viewBox="0 0 100 100" aria-hidden="true">
+    <ellipse cx="50" cy="84" rx="30" ry="5" fill="#000" opacity=".08"/>
+    <path d="M18 62 Q18 46 50 46 Q82 46 82 62 Q82 70 50 70 Q18 70 18 62 Z" fill="#F29BBA"/>
+    <rect x="20" y="58" width="60" height="9" rx="4.5" fill="#FFF6EE"/>
+    <path d="M20 58 q5 4 10 0 q5 4 10 0 q5 4 10 0 q5 4 10 0 q5 4 10 0 q5 4 10 0" fill="none" stroke="#E57FA3" stroke-width="2"/>
+    <path d="M18 54 Q18 34 50 34 Q82 34 82 54 Q82 60 50 60 Q18 60 18 54 Z" fill="#F6B9CE"/>
+    <ellipse cx="38" cy="42" rx="9" ry="3.5" fill="#FFFFFF" opacity=".6"/>
+    <path d="M18 74 Q18 66 50 66 Q82 66 82 74 Q82 80 50 80 Q18 80 18 74 Z" fill="#F6B9CE"/></svg>`,
+  cake: `<svg viewBox="0 0 100 100" aria-hidden="true">
+    <ellipse cx="50" cy="84" rx="38" ry="5" fill="#000" opacity=".08"/>
+    <path d="M14 48 Q14 34 34 34 H66 Q86 34 86 48 V80 H14 Z" fill="#E8C48E"/>
+    <path d="M14 48 Q14 34 34 34 H66 Q86 34 86 48 V52 H14 Z" fill="#C9935A"/>
+    <path d="M18 40 Q26 50 32 40 Q38 54 46 40 Q52 52 60 40 Q66 50 74 40 Q80 48 84 42" fill="none" stroke="#C9B3E6" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="30" cy="66" r="1.8" fill="#B07B48"/><circle cx="52" cy="70" r="1.8" fill="#B07B48"/><circle cx="70" cy="62" r="1.8" fill="#B07B48"/>
+    <path d="M44 26 q4 -10 12 -6 q-4 8 -12 6 Z" fill="#A98BD6"/><path d="M50 30 V22" stroke="#7FA36B" stroke-width="2"/></svg>`,
+  candle: `<svg viewBox="0 0 100 100" aria-hidden="true">
+    <ellipse cx="50" cy="86" rx="28" ry="5" fill="#000" opacity=".08"/>
+    <ellipse cx="50" cy="16" rx="14" ry="14" fill="#FFE9A8" opacity=".5"/>
+    <path d="M50 8 Q58 18 50 26 Q42 18 50 8 Z" fill="#FFB44D"/><path d="M50 14 Q54 19 50 24 Q46 19 50 14 Z" fill="#FFF1C2"/>
+    <path d="M50 26 V36" stroke="#5A4A3A" stroke-width="2"/>
+    <rect x="26" y="34" width="48" height="50" rx="10" fill="#FFFFFF" opacity=".85"/>
+    <rect x="30" y="40" width="40" height="40" rx="7" fill="#FFD2B8"/>
+    <rect x="34" y="52" width="32" height="16" rx="3" fill="#FFF6EE"/>
+    <text x="50" y="63.5" font-size="8" text-anchor="middle" fill="#B4476F" font-family="serif">PEACH</text></svg>`,
+  diffuser: `<svg viewBox="0 0 100 100" aria-hidden="true">
+    <ellipse cx="50" cy="88" rx="24" ry="4.5" fill="#000" opacity=".08"/>
+    <path d="M47 40 L34 8" stroke="#8A6A4E" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M50 40 L50 4" stroke="#8A6A4E" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M53 40 L68 10" stroke="#8A6A4E" stroke-width="2.4" stroke-linecap="round"/>
+    <rect x="42" y="34" width="16" height="10" rx="2" fill="#B88A2E"/>
+    <path d="M38 44 H62 Q74 52 74 66 Q74 86 50 86 Q26 86 26 66 Q26 52 38 44 Z" fill="#E9A1B8" opacity=".9"/>
+    <path d="M30 66 Q50 72 70 66 Q70 84 50 84 Q30 84 30 66 Z" fill="#D9789A"/>
+    <ellipse cx="38" cy="56" rx="4" ry="7" fill="#FFFFFF" opacity=".55"/></svg>`,
+  cookie: `<svg viewBox="0 0 100 100" aria-hidden="true">
+    <ellipse cx="50" cy="86" rx="34" ry="5" fill="#000" opacity=".08"/>
+    <path d="M36 22 L42 36 L57 37 L45 46 L49 61 L36 53 L23 61 L27 46 L15 37 L30 36 Z" fill="#E8C48E" stroke="#C9935A" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M36 28 L40 37 L50 38 L42 44 L45 54 L36 48 L27 54 L30 44 L22 38 L32 37 Z" fill="#B8CFF0"/>
+    <path d="M66 44 L71 56 L84 57 L74 64 L77 77 L66 70 L55 77 L58 64 L48 57 L61 56 Z" fill="#E8C48E" stroke="#C9935A" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M66 50 L69 57 L77 58 L71 63 L73 71 L66 67 L59 71 L61 63 L55 58 L63 57 Z" fill="#FFF6D6"/>
+    <circle cx="72" cy="22" r="2.5" fill="#F6B9CE"/><circle cx="20" cy="74" r="2" fill="#B8CFF0"/><circle cx="84" cy="36" r="1.8" fill="#FFE27A"/></svg>`,
+  box: `<svg viewBox="0 0 100 100" aria-hidden="true">
+    <ellipse cx="50" cy="88" rx="36" ry="5" fill="#000" opacity=".08"/>
+    <rect x="18" y="44" width="64" height="40" rx="4" fill="#F4E9DA"/>
+    <rect x="14" y="34" width="72" height="14" rx="4" fill="#E8C9A0"/>
+    <rect x="45" y="34" width="10" height="50" fill="#F29BBA"/>
+    <path d="M50 34 Q34 18 30 28 Q28 36 50 34 Z" fill="#F29BBA"/><path d="M50 34 Q66 18 70 28 Q72 36 50 34 Z" fill="#F29BBA"/>
+    <circle cx="50" cy="33" r="4" fill="#E57FA3"/>
+    <path d="M26 60 h10 M64 60 h10" stroke="#C9A97F" stroke-width="2" stroke-linecap="round"/></svg>`
+};
+const PRODUCTS = [
+  { id: 'macaron', name: '雲朵棉花糖馬卡龍', story: '咬下去像踩在雲上，軟軟的，帶一點草莓牛奶香。', note: '6 入 ・ 草莓牛奶', price: 10, bg: '#FCE3EC', dot: '#F6B9CE' },
+  { id: 'cake', name: '薰衣草伯爵磅蛋糕', story: '茶會開場的第一片，伯爵茶香裡藏著薰衣草。', note: '整條 ・ 約 18 公分', price: 10, bg: '#EDE4F7', dot: '#C9B3E6' },
+  { id: 'candle', name: '月光白桃香氛蠟燭', story: '茶會散場後點上它，房間會留著白桃的甜味。', note: '200g ・ 燃燒約 40 小時', price: 10, bg: '#FFF1E6', dot: '#FFD2B8' },
+  { id: 'diffuser', name: '玫瑰荔枝擴香瓶', story: '放在窗邊，風一吹，就像茶會還沒結束。', note: '100ml ・ 附 3 支擴香棒', price: 10, bg: '#F9E1E8', dot: '#E9A1B8' },
+  { id: 'cookie', name: '星星糖霜餅乾', story: '從雲朵縫隙掉下來的星星，每一片花色都不同。', note: '9 片 ・ 手繪糖霜', price: 10, bg: '#E5EEFA', dot: '#B8CFF0' },
+  { id: 'box', name: '午後茶會小禮盒', story: '把一整場茶會裝進盒子，送給想念的人。', note: '馬卡龍＋茶包＋小蠟燭', price: 10, bg: '#F4E9DA', dot: '#E8C9A0' }
+];
+const DISCLAIMER = '（此為虛構物，不會收到實體貨物，但您可以抖內 10 塊給貓麗絲 ♡）';
+const SEAL = `<svg class="seal" viewBox="0 0 64 64" aria-hidden="true">
+  <path d="M32 2 l6 5 8 -1 3 7 7 3 -1 8 5 6 -5 6 1 8 -7 3 -3 7 -8 -1 -6 5 -6 -5 -8 1 -3 -7 -7 -3 1 -8 -5 -6 5 -6 -1 -8 7 -3 3 -7 8 1 Z" fill="#B4476F"/>
+  <circle cx="32" cy="32" r="18" fill="none" stroke="#F6D9E4" stroke-width="1.5" opacity=".7"/>
+  <text x="32" y="39" font-size="20" text-anchor="middle" fill="#FBF7F2" font-family="serif" font-weight="700">雲</text></svg>`;
+const cart = {};
+const $ = (id) => document.getElementById(id);
+const money = (n) => 'NT$' + n.toLocaleString('en-US');
+const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function renderGrid() {
+  $('grid').innerHTML = PRODUCTS.map((p) => `
+    <article class="card">
+      <div class="art" style="background: ${p.bg}" role="img" aria-label="${p.name} 插圖">${ART[p.id]}</div>
+      <h3>${p.name}</h3>
+      <p class="story">${p.story}</p>
+      <p class="note">${p.note}</p>
+      <p class="disclaimer">${DISCLAIMER}</p>
+      <div class="row"><span class="price">${money(p.price)}</span>
+        <button class="add" type="button" data-add="${p.id}">放上茶盤</button></div>
+    </article>`).join('');
+}
+function count() { return Object.values(cart).reduce((a, b) => a + b, 0); }
+function subtotal() { return PRODUCTS.reduce((s, p) => s + (cart[p.id] || 0) * p.price, 0); }
+function linesHTML() {
+  const items = PRODUCTS.filter((p) => cart[p.id]);
+  if (!items.length) return '<p class="empty">茶盤還是空的，去菜單挑幾樣吧。</p>';
+  return items.map((p) => `
+    <div class="line">
+      <div class="art" style="background: ${p.bg}" aria-hidden="true">${ART[p.id]}</div>
+      <div><div class="name">${p.name}</div><div class="sub">${money(p.price)}</div></div>
+      <div class="qty">
+        <button type="button" data-dec="${p.id}" aria-label="${p.name} 減少一個">−</button>
+        <span>${cart[p.id]}</span>
+        <button type="button" data-inc="${p.id}" aria-label="${p.name} 增加一個">+</button>
+      </div>
+    </div>`).join('');
+}
+function fillCup() {
+  const n = count();
+  const level = Math.min(n / 6, 1); // 6 items fills the cup
+  const h = 22 * level;
+  const r = $('teaLevel');
+  r.setAttribute('y', String(36 - h));
+  r.setAttribute('height', String(h));
+  $('openCart').classList.toggle('full', n >= 1);
+  $('badge').textContent = n + ' 樣';
+  $('openCart').setAttribute('aria-label', '打開茶盤，目前有 ' + n + ' 樣');
+}
+function renderCart() {
+  fillCup();
+  $('lines').innerHTML = linesHTML();
+  $('coLines').innerHTML = linesHTML();
+  $('subtotal').textContent = money(subtotal());
+  $('coSubtotal').textContent = money(subtotal());
+  $('toCheckout').disabled = count() === 0;
+  $('next1').disabled = count() === 0;
+}
+function fly(fromEl, color) {
+  const cup = $('openCart').querySelector('svg');
+  if (reduceMotion) { bump(); return; }
+  const a = fromEl.getBoundingClientRect(), b = cup.getBoundingClientRect();
+  const dot = document.createElement('span');
+  dot.className = 'flyer';
+  dot.style.background = color;
+  dot.style.left = (a.left + a.width / 2 - 14) + 'px';
+  dot.style.top = (a.top + a.height / 2 - 14) + 'px';
+  document.body.appendChild(dot);
+  requestAnimationFrame(() => {
+    dot.style.transform = `translate(${b.left + b.width / 2 - a.left - a.width / 2}px, ${b.top + b.height / 2 - a.top - a.height / 2}px) scale(.4)`;
+    dot.style.opacity = '.2';
+  });
+  setTimeout(() => { dot.remove(); bump(); }, 620);
+}
+function bump() { const c = $('openCart'); c.classList.remove('bump'); void c.offsetWidth; c.classList.add('bump'); }
+function openCart(open) { $('drawer').hidden = !open; $('scrim').hidden = !open; if (open) $('closeCart').focus(); }
+function showStep(n) {
+  ['step1', 'step2', 'step3', 'done'].forEach((id, i) => { $(id).hidden = i !== n - 1; });
+  $('steps').hidden = n === 4;
+  [...$('steps').children].forEach((li, i) => { li.className = i + 1 < n ? 'ok' : i + 1 === n ? 'on' : ''; });
+  $('checkout').scrollTop = 0;
+}
+function ship() { return document.querySelector('input[name="ship"]:checked').value === 'home' ? { label: '宅配到府', fee: 0 } : { label: '超商取貨', fee: 0 }; }
+function payLabel() { return document.querySelector('input[name="pay"]:checked').value === 'atm' ? 'ATM 轉帳' : '取貨時付款'; }
+function detailRows() {
+  const s = ship();
+  return PRODUCTS.filter((p) => cart[p.id]).map((p) => `<div class="sum-row"><span>${p.name} × ${cart[p.id]}</span><span>${money(p.price * cart[p.id])}</span></div>`).join('') +
+    `<div class="sum-row"><span>${s.label}</span><span>${money(s.fee)}</span></div>
+     <div class="sum-row big"><span>總計</span><span>${money(subtotal() + s.fee)}</span></div>`;
+}
+function renderSummary() {
+  $('summary').innerHTML = detailRows() +
+    `<p class="hint">收件人：${esc($('f-name').value)} ・ ${esc($('f-phone').value)}<br>付款方式：${payLabel()}</p>`;
+}
+function renderInvite() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  const no = 'CT' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + String(Math.floor(1000 + Math.random() * 9000));
+  const time = d.getFullYear() + '/' + pad(d.getMonth() + 1) + '/' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  const isAtm = document.querySelector('input[name="pay"]:checked').value === 'atm';
+  $('invite').innerHTML = SEAL + `
+    <p class="kicker">INVITATION</p>
+    <p class="when">誠摯邀請</p>
+    <div class="guest">${esc($('f-name').value)}</div>
+    <h2>參加午後三點的<br>雲朵茶會</h2>
+    <p class="when">你挑的甜點和香氛，已經擺上長桌了。</p>
+    <div class="divider"></div>
+    <div class="detail">
+      <div class="sum-row"><span>訂單編號</span><span class="no">${no}</span></div>
+      <div class="sum-row"><span>下單時間</span><span>${time}</span></div>
+      <div class="sum-row"><span>訂單狀態</span><span class="tag">${isAtm ? '等待付款（示範）' : '已成立（示範）'}</span></div>
+      <h3>訂單明細</h3>
+      ${detailRows()}
+      <p class="hint">收件人：${esc($('f-name').value)} ・ ${esc($('f-phone').value)}<br>付款方式：${payLabel()}</p>
+      <p class="hint">${isAtm ? '真實商店會在這裡顯示轉帳帳號和付款期限，示範訂單不提供。' : '真實商店會在出貨後寄送取貨通知。'}這是示範訂單，不會出貨也不會收款。</p>
+    </div>`;
+}
+
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('button'); if (!t) return;
+  if (t.dataset.add) {
+    const p = PRODUCTS.find((x) => x.id === t.dataset.add);
+    cart[p.id] = (cart[p.id] || 0) + 1;
+    fly(t, p.dot);
+    setTimeout(renderCart, reduceMotion ? 0 : 600);
+    t.textContent = '已放上 ✓'; t.classList.add('done');
+    setTimeout(() => { t.textContent = '放上茶盤'; t.classList.remove('done'); }, 1200);
+  }
+  if (t.dataset.inc) { cart[t.dataset.inc]++; renderCart(); }
+  if (t.dataset.dec) { cart[t.dataset.dec]--; if (cart[t.dataset.dec] <= 0) delete cart[t.dataset.dec]; renderCart(); }
+});
+$('openCart').addEventListener('click', () => openCart(true));
+$('closeCart').addEventListener('click', () => openCart(false));
+$('scrim').addEventListener('click', () => openCart(false));
+$('toCheckout').addEventListener('click', () => { openCart(false); $('checkout').hidden = false; showStep(1); });
+$('next1').addEventListener('click', () => showStep(2));
+$('step2').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const ok = $('f-name').value.trim() && /^09\d{8}$/.test($('f-phone').value.trim());
+  $('err').hidden = !!ok; if (!ok) return;
+  renderSummary(); showStep(3);
+});
+$('back2').addEventListener('click', () => showStep(1));
+$('back3').addEventListener('click', () => showStep(2));
+$('place').addEventListener('click', () => { renderInvite(); Object.keys(cart).forEach((k) => delete cart[k]); renderCart(); showStep(4); });
+$('again').addEventListener('click', () => { $('checkout').hidden = true; $('openCart').focus(); });
+$('closeCo').addEventListener('click', () => { $('checkout').hidden = true; });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('drawer').hidden) openCart(false); });
+
+renderGrid();
+cart.macaron = 1; cart.candle = 1; // sample tray so the first view shows a filling cup and a working checkout
+renderCart();
+</script>
+</body>
+</html>
