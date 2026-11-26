@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>服務與開店方式｜喵境 MEOWONDERLAND</title>
+<meta name="description" content="不用付月費，也能有一個有世界觀的品牌網站。喵境的服務內容、客人怎麼下單的免費做法，以及開店平台費用參考。">
+<style>
+/* Layout: guide page — offerings, free ways to take orders, what costs money, coming soon, then a platform reference table and calculator */
+:root {
+  --bg: #F7F3FA; --surface: #FFFFFF; --ink: #3A2846; --muted: #6E5A7C; --line: #E4D8EC;
+  --rose: #E7A9C0; --rose-deep: #B4476F; --gold: #B88A2E; --plum: #2B1E4A; --soft: #FBE9F0; --ok: #2F7D5B;
+  --display: "Noto Serif TC", "Noto Serif CJK TC", "Songti TC", serif;
+  --body: "Noto Sans TC", "Noto Sans CJK TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.7; }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; line-height: 1.35; }
+p { margin: 0; }
+a { color: var(--rose-deep); }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+.site-nav { background: var(--ink); }
+.site-nav .wrap { display: flex; gap: 4px 18px; flex-wrap: wrap; align-items: center; padding-block: 10px; }
+.site-nav b { font-family: var(--display); color: #F6D9E4; margin-right: auto; letter-spacing: 2px; }
+.site-nav a { color: #E7D9EC; text-decoration: none; font-size: 14px; padding-block: 8px; }
+.site-nav a[aria-current="page"] { color: #FFFFFF; font-weight: 700; border-bottom: 2px solid var(--rose); }
+
+section { padding-block: 36px; border-bottom: 1px solid var(--line); }
+.eyebrow { font-size: 12px; letter-spacing: 4px; color: var(--gold); font-weight: 700; }
+.head { display: grid; gap: 8px; margin-bottom: 20px; max-width: 42em; }
+.head p { color: var(--muted); }
+.hero h1 { font-size: clamp(30px, 5.5vw, 44px); }
+
+.cards { display: grid; gap: 14px; grid-template-columns: 1fr; }
+@media (min-width: 760px) { .cards.two { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 900px) { .cards.three { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.card { background: var(--surface); border-radius: 16px; border: 1px solid var(--line); padding: 20px; display: grid; gap: 10px; align-content: start; }
+.card .tag { justify-self: start; font-size: 12px; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: var(--soft); color: var(--rose-deep); }
+.card h3 { font-size: 21px; }
+.card p { color: var(--muted); font-size: 15px; }
+.card ul { margin: 0; padding-left: 1.2em; font-size: 14px; display: grid; gap: 4px; }
+.card .fit { background: var(--bg); border-radius: 10px; padding: 10px 12px; font-size: 14px; color: var(--ink); }
+.card.featured { border: 2px solid var(--ink); }
+
+.costs { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.costs div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line); align-items: baseline; }
+.costs div:last-child { border-bottom: 0; }
+.costs span { font-size: 13px; color: var(--muted); display: block; }
+.costs b { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.costs .free { color: var(--ok); }
+
+.soon { background: var(--surface); border: 1.5px dashed var(--gold); border-radius: 16px; padding: 20px; display: grid; gap: 8px; }
+.soon .tag { justify-self: start; font-size: 12px; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: #F6ECD5; color: #7A5A12; }
+.soon p { color: var(--muted); }
+
+.table-box { overflow-x: auto; background: var(--surface); border-radius: 14px; border: 1px solid var(--line); }
+table { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 14px; }
+th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { background: var(--bg); font-size: 13px; color: var(--muted); font-weight: 700; white-space: nowrap; }
+td b { display: block; }
+td .n { font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.free-row td { background: #F2FAF5; }
+tr:last-child td { border-bottom: 0; }
+.note { font-size: 13px; color: var(--muted); margin-top: 12px; }
+
+.calc { display: grid; gap: 16px; grid-template-columns: 1fr; margin-top: 24px; }
+@media (min-width: 860px) { .calc { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); align-items: start; } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px; display: grid; gap: 14px; }
+.field { display: grid; gap: 6px; }
+.field label { font-weight: 700; font-size: 14px; }
+.field input[type="number"] { min-height: 48px; border-radius: 10px; border: 1.5px solid var(--line); padding: 0 12px; font: inherit; font-variant-numeric: tabular-nums; }
+.field input[type="range"] { accent-color: var(--rose-deep); }
+.presets { display: flex; gap: 6px; flex-wrap: wrap; }
+.presets button { min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); font: inherit; font-size: 13px; cursor: pointer; }
+.presets button[aria-pressed="true"] { border-color: var(--rose-deep); background: var(--soft); font-weight: 700; }
+.results { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.results li { display: grid; gap: 4px; }
+.results .top { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; }
+.results .top b { font-variant-numeric: tabular-nums; }
+.results .sub { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.results .bar { height: 10px; border-radius: 999px; background: var(--bg); overflow: hidden; display: flex; }
+.results .bar span { display: block; height: 100%; }
+.results .bar .fee { background: var(--ink); }
+.results .bar .pay { background: var(--rose); }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; vertical-align: middle; }
+
+details { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+details + details { margin-top: 10px; }
+summary { min-height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 16px; cursor: pointer; font-weight: 700; list-style: none; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; color: var(--rose-deep); font-size: 20px; }
+details[open] summary::after { content: "−"; }
+details p { padding: 0 16px 16px; color: var(--muted); font-size: 15px; }
+
+.cta { background: var(--plum); color: #FBF3E6; border-radius: 18px; padding: 26px 22px; display: grid; gap: 12px; justify-items: start; }
+.cta p { color: #E7D9EC; }
+.cta a { display: inline-flex; align-items: center; min-height: 50px; padding: 0 24px; border-radius: 999px; background: #E8C97A; color: #3A2846; font-weight: 700; text-decoration: none; }
+.sources { font-size: 13px; color: var(--muted); }
+.sources ul { margin: 6px 0 0; padding-left: 1.2em; }
+footer { padding-block: 24px 48px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<nav class="site-nav" aria-label="網站選單"><div class="wrap">
+  <b>喵境</b>
+  <a href="index.html">示範店・雲朵茶會</a>
+  <a href="features.html">功能展示</a>
+  <a href="services.html" aria-current="page">服務與開店方式</a>
+  <a href="quote.html">報價</a>
+</div></nav>
+
+<main>
+  <section class="hero"><div class="wrap head">
+    <span class="eyebrow">服務與開店方式</span>
+    <h1>不用付月費，<br>也能有一個有世界觀的品牌網站</h1>
+    <p>剛起步的小品牌，不一定要一開始就付每年好幾萬的開店平台。我會幫你做一個有自己風格的品牌網站，免費放上網路，再把「購買」接到你現在就能用的管道。</p>
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="head"><span class="eyebrow">我現在可以幫你做的</span><h2>兩種品牌網站</h2><p>兩種都會先做手機版，也都可以免費放在網路上。詳細價格請看 <a href="quote.html">報價頁</a>。</p></div>
+    <div class="cards two">
+      <article class="card">
+        <span class="tag">輕巧入門</span>
+        <h3>品牌一頁式網站</h3>
+        <p>一頁說完你的品牌故事、主打商品和購買方式，適合放在 IG 個人檔案的連結。</p>
+        <ul><li>夢幻、可愛、暗黑童話三種風格擇一</li><li>商品介紹＋購買按鈕</li><li>手機版優先設計</li></ul>
+      </article>
+      <article class="card featured">
+        <span class="tag">喵境招牌</span>
+        <h3>世界觀品牌官網</h3>
+        <p>像示範店「<a href="index.html">雲朵茶會</a>」這樣，有故事、有互動，讓客人一點進來就記住你。</p>
+        <ul><li>最多 5 頁，客製互動和故事</li><li>可以從 <a href="features.html">功能展示</a> 挑互動效果</li><li>手機版優先設計</li></ul>
+      </article>
+    </div>
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="head"><span class="eyebrow">客人要怎麼買</span><h2>三種不用月費的接法</h2><p>品牌網站負責讓客人愛上你，「付款和出貨」交給你已經在用、或可以免費開通的管道。網站上的購買按鈕，我會幫你接過去。</p></div>
+    <div class="cards three">
+      <article class="card">
+        <span class="tag">已經在市集開店</span>
+        <h3>連到蝦皮或 Pinkoi</h3>
+        <p>每個商品的購買按鈕，直接連到你在市集上的商品頁。付款、出貨、訂單都照你原本的方式處理。</p>
+        <p class="fit"><b>費用：</b>網站不用錢，市集照原本的方式抽成。</p>
+      </article>
+      <article class="card">
+        <span class="tag">商品少、熟客多</span>
+        <h3>私訊下單＋轉帳</h3>
+        <p>購買按鈕連到你的 IG 或 LINE，客人私訊下單，你再提供轉帳資訊、安排出貨。很多手作小店都是這樣開始的。</p>
+        <p class="fit"><b>費用：</b>0 元，但訂單要自己記錄。</p>
+      </article>
+      <article class="card">
+        <span class="tag">想要線上付款</span>
+        <h3>連到免費開店方案</h3>
+        <p>你自己開一個不用月費的開店方案（例如 WACA 入門創業版），網站的購買按鈕再連到那邊的商品頁，就能線上付款。</p>
+        <p class="fit"><b>費用：</b>月費 0 元，每筆付金流手續費（WACA 入門版信用卡 3.5%）。</p>
+      </article>
+    </div>
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="head"><span class="eyebrow">要花錢的地方</span><h2>除了設計費，還有哪些費用？</h2><p>設計費是一次性的。網站上線之後，真正會持續花錢的只有這幾項：</p></div>
+    <div class="costs">
+      <div><p>網站空間<span>放在 GitHub Pages</span></p><b class="free">免費</b></div>
+      <div><p>網址<span>免費的「你的名字.github.io」；想用自己的網域（例如 .com），要另外跟網域商購買</span></p><b>免費 ／ 網域每年約數百元</b></div>
+      <div><p>收款手續費<span>依你選的購買方式，由市集或金流公司收取</span></p><b>每筆依平台費率</b></div>
+      <div><p>運費<span>超商取貨或宅配，照物流公司的價格</span></p><b>每件依物流費率</b></div>
+    </div>
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="soon">
+      <span class="tag">即將推出</span>
+      <h2>開店平台版型設計</h2>
+      <p>在 WACA 等開店平台上，幫你設計整間商店的版型，讓購物車、會員、訂單都在同一個地方。我正在用自己的示範店實際走過完整的交易流程，熟練之後才會開放接案。想第一個知道，可以先追蹤 IG @meowonderlandcatlice。</p>
+    </div>
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="head"><span class="eyebrow">參考資料</span><h2>之後想開完整的網路商店？費用比一比</h2><p>等生意穩定、訂單變多，可能就需要有購物車、會員和訂單後台的開店平台。這裡整理各平台的費用給你參考，綠色是不用月費的方案。</p></div>
+    <div class="table-box" role="region" aria-label="開店平台費用比較表" tabindex="0">
+      <table>
+        <thead><tr><th scope="col">平台</th><th scope="col">方案例子</th><th scope="col">固定費用</th><th scope="col">營業額抽成</th><th scope="col">金流與備註</th></tr></thead>
+        <tbody>
+          <tr class="free-row"><td><b>WACA</b></td><td>入門創業版</td><td class="n">NT$0</td><td class="n">不抽成</td><td>信用卡手續費 3.5%</td></tr>
+          <tr class="free-row"><td><b>1shop</b></td><td>隨用隨付</td><td class="n">NT$0</td><td class="n">1%</td><td>信用卡約 2.8%</td></tr>
+          <tr class="free-row"><td><b>ShopStore</b></td><td>新手方案</td><td class="n">NT$0</td><td class="n">5%</td><td>金流手續費另計</td></tr>
+          <tr><td><b>WACA</b></td><td>商務成長版</td><td class="n">NT$3,099／月（年繳）</td><td class="n">不抽成</td><td>信用卡手續費 2.1%</td></tr>
+          <tr><td><b>EasyStore</b></td><td>標準版</td><td class="n">NT$1,469／月（年繳）</td><td class="n">不抽成</td><td>金流手續費另計</td></tr>
+          <tr><td><b>Shopify</b></td><td>Basic</td><td class="n">US$22／月（年繳）</td><td class="n">2%</td><td>台灣不能用 Shopify Payments，接第三方金流時加收這 2%；金流商費用另計（綠界信用卡約 2.75% 起）</td></tr>
+          <tr><td><b>CYBERBIZ</b></td><td>進階版+</td><td class="n">年費 NT$47,000（未稅）</td><td class="n">1%</td><td>另有專業版+，年費 NT$27,000（未稅）</td></tr>
+          <tr><td><b>SHOPLINE</b></td><td>網店探索者</td><td class="n">年費 NT$40,000<br>＋開通費 NT$5,000（一次）</td><td class="n">2%</td><td>高階方案抽成 1.5%</td></tr>
+          <tr><td><b>蝦皮</b>（市集）</td><td>一般賣家</td><td class="n">NT$0</td><td class="n">約 5.5%～6%</td><td>另收金流 2.5%、發票每張 2.5 元；參加免運方案約再加 6%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">資料整理於 2026 年 11 月，來源列在本頁最下方。方案和費率常常調整，請以各平台官網為準。</p>
+
+    <div class="calc">
+      <div class="panel">
+        <div class="field">
+          <label for="rev">預估每月營業額（NT$）</label>
+          <input type="number" id="rev" min="0" step="1000" value="30000" inputmode="numeric">
+          <input type="range" id="revRange" min="0" max="300000" step="5000" value="30000" aria-label="用滑桿調整每月營業額">
+        </div>
+        <div class="presets" role="group" aria-label="快速選擇">
+          <button type="button" data-v="10000">剛起步 1 萬</button>
+          <button type="button" data-v="30000">小有規模 3 萬</button>
+          <button type="button" data-v="100000">穩定成長 10 萬</button>
+        </div>
+        <p class="note" style="margin: 0">換算：一年營業額 <b id="yearRev"></b></p>
+        <div class="legend"><span><i style="background: var(--ink)"></i>平台費用（月費、年費、抽成）</span><span><i style="background: var(--rose)"></i>金流手續費（估算）</span></div>
+      </div>
+      <div class="panel">
+        <ol class="results" id="results" aria-live="polite"></ol>
+        <p class="note" style="margin: 0">估算方式：未寫明金流費率的平台，以信用卡約 2.75% 計；蝦皮用成交 6% 加金流 2.5%，未含免運方案；Shopify 以 1 美元約 32 元換算。不含運費、包材、廣告和設計費。</p>
+      </div>
+    </div>
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="head"><span class="eyebrow">常見問題</span><h2>開店前最常被問的幾件事</h2></div>
+    <details><summary>品牌網站可以直接刷卡結帳嗎？</summary><p>目前喵境做的品牌網站，不會直接在網站上刷卡。購買按鈕會接到你的蝦皮、Pinkoi、免費開店方案，或私訊下單，付款和出貨在那邊完成。這樣你不用付開店平台的月費，也不用擔心網站要處理客人的信用卡資料。</p></details>
+    <details><summary>我已經在 Pinkoi 或蝦皮開店了，還需要品牌網站嗎？</summary><p>不一定，但很多小品牌會兩邊一起用：市集負責讓新客人發現你，品牌網站負責說你的故事、讓客人記住你，購買再導回市集。</p></details>
+    <details><summary>網站放在免費空間，會不會不穩定？</summary><p>GitHub Pages 是很多工程師和開源專案在用的免費服務，一般品牌網站的流量完全夠用。如果之後想換成自己的網域，網站可以直接沿用。</p></details>
+    <details><summary>做好網站之後，每年還要付設計費嗎？</summary><p>不用。設計費是一次性的。上線後 14 天內的小調整免費，之後想改版或加功能再另外報價。</p></details>
+  </div></section>
+
+  <section><div class="wrap">
+    <div class="cta">
+      <h2>想知道你的品牌網站要多少錢？</h2>
+      <p>到報價頁選好方案和想要的功能，就能馬上看到預估金額，也可以直接私訊 IG @meowonderlandcatlice 聊聊。</p>
+      <a href="quote.html">前往報價頁 →</a>
+    </div>
+  </div></section>
+
+  <section style="border-bottom: 0"><div class="wrap sources">
+    <b>資料來源</b>
+    <ul>
+      <li><a href="https://ajmartech.com/blogs/all-articles/ecommerce-platform-taiwan" target="_blank" rel="noopener">台灣電商平台費用比較：SHOPLINE、Shopify、CYBERBIZ⋯7 家怎麼選（2026）</a>，頁面標示最後更新 2026 年 11 月 3 日</li>
+      <li><a href="https://softpick.com.tw/guide/ecommerce-platform-pricing-2026" target="_blank" rel="noopener">開店平台費用總覽 2026｜軟體選 SoftPick</a>，資料查證日期 2026 年 7 月 29 日</li>
+      <li><a href="https://www.4gamers.com.tw/saged/detail/qex04n1664g99r" target="_blank" rel="noopener">蝦皮 2026 新規相關報導（4Gamers）</a></li>
+    </ul>
+  </div></section>
+</main>
+
+<footer><div class="wrap">喵境 MEOWONDERLAND ・ IG @meowonderlandcatlice ・ 本頁費用僅供參考，以各平台官網公告為準</div></footer>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const money = (n) => 'NT$' + Math.round(n).toLocaleString('en-US');
+// Yearly cost model; r = yearly revenue. fee = platform charges, pay = estimated payment-processing fees.
+const MODELS = [
+  { name: 'WACA 入門創業版', fee: (r) => 0, pay: (r) => r * 0.035, note: '月費 0，信用卡 3.5%' },
+  { name: '1shop 隨用隨付', fee: (r) => r * 0.01, pay: (r) => r * 0.028, note: '月費 0，成交 1%＋信用卡 2.8%' },
+  { name: 'ShopStore 新手方案', fee: (r) => r * 0.05, pay: (r) => r * 0.0275, note: '月費 0，成交 5%' },
+  { name: 'EasyStore 標準版', fee: (r) => 1469 * 12, pay: (r) => r * 0.0275, note: 'NT$1,469×12' },
+  { name: 'WACA 商務成長版', fee: (r) => 3099 * 12, pay: (r) => r * 0.021, note: 'NT$3,099×12，信用卡 2.1%' },
+  { name: 'Shopify Basic', fee: (r) => 22 * 12 * 32 + r * 0.02, pay: (r) => r * 0.0275, note: 'US$22×12＋2% 第三方交易費' },
+  { name: 'CYBERBIZ 進階版+', fee: (r) => 47000 + r * 0.01, pay: (r) => r * 0.0275, note: '年費 NT$47,000（未稅）＋1%' },
+  { name: 'SHOPLINE 網店探索者', fee: (r) => 45000 + r * 0.02, pay: (r) => r * 0.0275, note: '年費＋開通費 NT$45,000＋2%' },
+  { name: '蝦皮（市集）', fee: (r) => r * 0.06, pay: (r) => r * 0.025, note: '成交 6%＋金流 2.5%' }
+];
+function render() {
+  const m = Math.max(0, Number($('rev').value) || 0);
+  const r = m * 12;
+  $('yearRev').textContent = money(r);
+  const rows = MODELS.map((x) => ({ ...x, f: x.fee(r), p: x.pay(r) })).map((x) => ({ ...x, t: x.f + x.p })).sort((a, b) => a.t - b.t);
+  const max = Math.max(...rows.map((x) => x.t), 1);
+  $('results').innerHTML = rows.map((x) => `
+    <li>
+      <div class="top"><span>${x.name}</span><b>${money(x.t)}</b></div>
+      <div class="bar" aria-hidden="true"><span class="fee" style="width:${x.f / max * 100}%"></span><span class="pay" style="width:${x.p / max * 100}%"></span></div>
+      <div class="sub">平台 ${money(x.f)}＋金流 ${money(x.p)} ・ ${x.note}</div>
+    </li>`).join('');
+  document.querySelectorAll('.presets button').forEach((b) => b.setAttribute('aria-pressed', String(Number(b.dataset.v) === m)));
+}
+$('rev').addEventListener('input', () => { $('revRange').value = $('rev').value; render(); });
+$('revRange').addEventListener('input', () => { $('rev').value = $('revRange').value; render(); });
+document.querySelectorAll('.presets button').forEach((b) => b.addEventListener('click', () => { $('rev').value = b.dataset.v; $('revRange').value = b.dataset.v; render(); }));
+render();
+</script>
+</body>
+</html>

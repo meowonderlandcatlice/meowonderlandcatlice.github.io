@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>報價｜喵境 MEOWONDERLAND</title>
+<meta name="description" content="選擇網站方案和加購功能，馬上看到預估報價、訂金與工期，可以複製或存成 PDF。">
+<style>
+/* Layout: quote builder — options on the left, a live quote sheet on the right (stacked on phone); print shows only the sheet */
+:root {
+  --bg: #F7F3FA; --surface: #FFFFFF; --ink: #3A2846; --muted: #6E5A7C; --line: #E4D8EC;
+  --rose: #E7A9C0; --rose-deep: #B4476F; --gold: #B88A2E; --soft: #FBE9F0; --paper: #FFFBF3;
+  --display: "Noto Serif TC", "Noto Serif CJK TC", "Songti TC", serif;
+  --body: "Noto Sans TC", "Noto Sans CJK TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+.wrap { max-width: 1100px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; }
+p { margin: 0; }
+a { color: var(--rose-deep); }
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+.site-nav { background: var(--ink); }
+.site-nav .wrap { display: flex; gap: 4px 18px; flex-wrap: wrap; align-items: center; padding-block: 10px; }
+.site-nav b { font-family: var(--display); color: #F6D9E4; margin-right: auto; letter-spacing: 2px; }
+.site-nav a { color: #E7D9EC; text-decoration: none; font-size: 14px; padding-block: 8px; }
+.site-nav a[aria-current="page"] { color: #FFFFFF; font-weight: 700; border-bottom: 2px solid var(--rose); }
+
+.intro { padding-block: 32px 20px; display: grid; gap: 8px; max-width: 46em; }
+.intro h1 { font-size: clamp(28px, 5vw, 40px); }
+.intro p { color: var(--muted); }
+
+.layout { display: grid; gap: 20px; grid-template-columns: 1fr; padding-bottom: 48px; }
+@media (min-width: 940px) { .layout { grid-template-columns: minmax(0, 1fr) minmax(0, 440px); align-items: start; } .sheet-col { position: sticky; top: 16px; } }
+
+.block { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: grid; gap: 12px; }
+.block + .block { margin-top: 16px; }
+.block h2 { font-size: 20px; }
+.block .hint { font-size: 13px; color: var(--muted); }
+.field { display: grid; gap: 6px; }
+.field label { font-weight: 700; font-size: 14px; }
+.field input { min-height: 48px; border-radius: 10px; border: 1.5px solid var(--line); padding: 0 12px; background: var(--surface); }
+
+.plans { display: grid; gap: 10px; }
+.plan { display: grid; grid-template-columns: 24px minmax(0, 1fr) auto; gap: 12px; align-items: start; border: 1.5px solid var(--line); border-radius: 14px; padding: 14px; cursor: pointer; background: var(--surface); }
+.plan:has(input:checked) { border-color: var(--rose-deep); background: var(--soft); }
+.plan input { width: 20px; height: 20px; margin-top: 3px; accent-color: var(--rose-deep); }
+.plan b { font-family: var(--display); font-size: 17px; display: block; }
+.plan ul { margin: 6px 0 0; padding-left: 1.1em; font-size: 13px; color: var(--muted); }
+.plan .p { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.addons { display: grid; gap: 8px; }
+.addon { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--line); }
+.addon:last-child { border-bottom: 0; }
+.addon .name { font-weight: 700; font-size: 15px; }
+.addon .desc { font-size: 12px; color: var(--muted); }
+.stepper { display: inline-flex; align-items: center; border: 1.5px solid var(--line); border-radius: 999px; }
+.stepper button { width: 44px; height: 44px; border: 0; background: none; font-size: 18px; }
+.stepper button:disabled { opacity: .3; cursor: not-allowed; }
+.stepper output { min-width: 26px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+.toggle { display: flex; align-items: center; gap: 12px; min-height: 52px; border: 1.5px solid var(--line); border-radius: 14px; padding: 0 14px; cursor: pointer; }
+.toggle:has(input:checked) { border-color: var(--rose-deep); background: var(--soft); }
+.toggle input { width: 20px; height: 20px; accent-color: var(--rose-deep); }
+.toggle span { flex: 1; font-size: 14px; }
+
+/* quote sheet */
+.sheet { background: var(--paper); border-radius: 6px; padding: 26px 22px; box-shadow: 0 20px 40px -24px rgba(58,40,70,.5); outline: 1.5px solid var(--gold); outline-offset: -10px; display: grid; gap: 14px; }
+.sheet .brand { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.sheet .brand b { font-family: var(--display); font-size: 22px; letter-spacing: 2px; }
+.sheet .brand span { font-size: 12px; letter-spacing: 4px; color: var(--gold); }
+.meta { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 12px; font-size: 13px; }
+.meta dt { color: var(--muted); }
+.meta dd { margin: 0; font-variant-numeric: tabular-nums; }
+.items { width: 100%; border-collapse: collapse; font-size: 14px; }
+.items th { text-align: left; font-size: 12px; color: var(--muted); font-weight: 700; border-bottom: 1.5px solid var(--ink); padding: 6px 0; }
+.items td { padding: 8px 0; border-bottom: 1px dashed var(--line); vertical-align: top; }
+.items td:last-child, .items th:last-child { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; padding-left: 10px; }
+.items small { display: block; color: var(--muted); font-size: 12px; }
+.sum { display: grid; gap: 4px; font-size: 14px; }
+.sum div { display: flex; justify-content: space-between; gap: 10px; font-variant-numeric: tabular-nums; }
+.sum .total { font-size: 22px; font-weight: 700; font-family: var(--display); border-top: 1.5px solid var(--ink); padding-top: 8px; margin-top: 4px; }
+.pay { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.pay div { background: var(--surface); border-radius: 10px; padding: 10px; display: grid; gap: 2px; font-size: 12px; color: var(--muted); }
+.pay b { font-size: 17px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.terms { font-size: 12px; color: var(--muted); display: grid; gap: 6px; }
+.terms h3 { font-size: 14px; color: var(--ink); }
+.terms ul { margin: 0; padding-left: 1.2em; display: grid; gap: 3px; }
+.actions { display: grid; gap: 8px; margin-top: 12px; }
+.primary { min-height: 52px; border-radius: 999px; border: 0; background: var(--ink); color: #FFFFFF; font-weight: 700; font-size: 16px; text-align: center; text-decoration: none; display: grid; place-items: center; }
+.ghost { min-height: 48px; border-radius: 999px; border: 1.5px solid var(--ink); background: transparent; font-weight: 700; }
+.status { font-size: 13px; color: var(--muted); text-align: center; min-height: 1.4em; }
+footer { border-top: 1px solid var(--line); padding-block: 24px 48px; color: var(--muted); font-size: 13px; }
+
+@media print {
+  body { background: #FFFFFF; }
+  .site-nav, .intro, .options, .actions, footer { display: none !important; }
+  .layout { display: block; padding: 0; }
+  .sheet { box-shadow: none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="site-nav" aria-label="網站選單"><div class="wrap">
+  <b>喵境</b>
+  <a href="index.html">示範店・雲朵茶會</a>
+  <a href="features.html">功能展示</a>
+  <a href="services.html">服務與開店方式</a>
+  <a href="quote.html" aria-current="page">報價</a>
+</div></nav>
+
+<header class="wrap intro">
+  <h1>報價</h1>
+  <p>選好方案和想要的功能，右邊會馬上算出預估報價。這是預估金額，聊過你的需求後，我會再給你正式報價單。報價一次說清楚，不會中途一直追加。</p>
+</header>
+
+<main class="wrap layout">
+  <div class="options">
+    <div class="block">
+      <h2>1. 你的品牌</h2>
+      <div class="field"><label for="client">品牌或店名</label><input id="client" autocomplete="off" placeholder="例如：雲朵茶會"></div>
+    </div>
+
+    <div class="block">
+      <h2>2. 選擇方案</h2>
+      <div class="plans" id="plans" role="radiogroup" aria-label="方案"></div>
+      <p class="hint">開店平台版型設計：即將推出。想知道客人怎麼付款、要花哪些費用，可以看 <a href="services.html">服務與開店方式</a>。</p>
+    </div>
+
+    <div class="block">
+      <h2>3. 加購項目</h2>
+      <p class="hint">互動小魔法可以到 <a href="features.html">功能展示</a> 頁挑，一個功能算一項。</p>
+      <div class="addons" id="addons"></div>
+      <label class="toggle"><input type="checkbox" id="rush"><span><b>急件</b>：工期縮短約三分之一，總價加 30%</span></label>
+    </div>
+  </div>
+
+  <div class="sheet-col">
+    <article class="sheet" id="sheet" aria-label="預估報價單">
+      <div class="brand"><b>喵境</b><span>ESTIMATE ・ 預估報價單</span></div>
+      <dl class="meta">
+        <dt>報價編號</dt><dd id="qNo"></dd>
+        <dt>報價日期</dt><dd id="qDate"></dd>
+        <dt>有效期限</dt><dd id="qValid"></dd>
+        <dt>品牌</dt><dd id="qClient"></dd>
+        <dt>預估工期</dt><dd id="qTime"></dd>
+      </dl>
+      <table class="items">
+        <thead><tr><th scope="col">項目</th><th scope="col">金額</th></tr></thead>
+        <tbody id="qItems"></tbody>
+      </table>
+      <div class="sum">
+        <div><span>小計</span><span id="qSub"></span></div>
+        <div id="qRushRow" hidden><span>急件加價 30%</span><span id="qRush"></span></div>
+        <div class="total"><span>總計</span><span id="qTotal"></span></div>
+      </div>
+      <div class="pay">
+        <div>訂金 50%<b id="qDeposit"></b>確認報價後支付，收到後開工</div>
+        <div>尾款 50%<b id="qBalance"></b>網站完成、上線前支付</div>
+      </div>
+      <div class="terms">
+        <h3>報價包含</h3>
+        <ul>
+          <li>3 次修改。1 次修改＝你把想改的地方整理成一份清單，我一次改完</li>
+          <li>上線後 14 天內免費調整：修正錯誤、改文字、換圖片</li>
+          <li>手機版與電腦版都會做好、實際測試</li>
+          <li>免費架站在 GitHub Pages，購買按鈕接到你指定的購買管道</li>
+        </ul>
+        <h3>不包含</h3>
+        <ul>
+          <li>在網站上直接刷卡的購物車系統（付款與出貨在你的市集、私訊或開店方案完成）</li>
+          <li>自己的網域費、市集或金流的手續費（直接付給各平台）</li>
+          <li>商品攝影；已確認的風格整個推翻重做</li>
+          <li>新增頁面或功能、超過 3 次的修改，另外報價</li>
+        </ul>
+      </div>
+    </article>
+    <div class="actions">
+      <a class="primary" href="https://www.instagram.com/meowonderlandcatlice/" target="_blank" rel="noopener">帶著這份報價，私訊 IG 聊聊</a>
+      <button class="ghost" type="button" id="copy">複製報價內容</button>
+      <button class="ghost" type="button" id="print">列印／存成 PDF</button>
+      <p class="status" id="status" aria-live="polite"></p>
+    </div>
+  </div>
+</main>
+
+<footer><div class="wrap">喵境 MEOWONDERLAND ・ IG @meowonderlandcatlice ・ 本頁為預估金額，正式報價以貓麗絲回覆的報價單為準</div></footer>
+
+<script>
+// ===== 價格設定：要改價格，只要改這一區的數字 =====
+const PLANS = [
+  { id: 'onepage', name: '品牌一頁式網站', price: 12000, weeks: 2,
+    items: ['1 頁長版網頁，夢幻、可愛、暗黑童話三種風格擇一', '購買按鈕接到你的蝦皮、Pinkoi、私訊或免費開店方案', '免費架在 GitHub Pages，手機版優先設計'] },
+  { id: 'world', name: '世界觀品牌官網', price: 38000, weeks: 4,
+    items: ['像「雲朵茶會」這樣的品牌網站，最多 5 頁', '客製互動與故事，含 2 項互動小魔法', '購買按鈕串接＋免費架在 GitHub Pages'] }
+];
+const ADDONS = [
+  { id: 'page', name: '額外頁面', desc: '例如關於我們、常見問題', price: 3000, unit: '頁', max: 10 },
+  { id: 'magic', name: '互動小魔法', desc: '功能展示頁任選一項', price: 1500, unit: '項', max: 15 },
+  { id: 'upload', name: '商品代上架', desc: '超過方案內的數量', price: 100, unit: '樣', max: 200, step: 10 },
+  { id: 'art', name: '主視覺插畫／橫幅', desc: '依品牌世界觀繪製', price: 4000, unit: '張', max: 5 },
+  { id: 'copy', name: '文案撰寫', desc: '商品故事、品牌介紹', price: 1500, unit: '頁', max: 10 },
+  { id: 'revise', name: '額外修改', desc: '超過 3 次之後', price: 1500, unit: '次', max: 10 },
+  { id: 'care', name: '上線後維護', desc: '每月小調整、更新活動橫幅', price: 800, unit: '個月', max: 12 }
+];
+const RUSH_RATE = 0.3;
+const VALID_DAYS = 14;
+// ===== 價格設定到這裡 =====
+
+const $ = (id) => document.getElementById(id);
+const money = (n) => 'NT$' + Math.round(n).toLocaleString('en-US');
+const state = { plan: 'world', qty: Object.fromEntries(ADDONS.map((a) => [a.id, 0])) };
+const pad = (n) => String(n).padStart(2, '0');
+const today = new Date();
+const fmt = (d) => d.getFullYear() + '/' + pad(d.getMonth() + 1) + '/' + pad(d.getDate());
+const quoteNo = 'MW-' + today.getFullYear() + pad(today.getMonth() + 1) + pad(today.getDate()) + '-' + String(Math.floor(1000 + Math.random() * 9000));
+
+$('plans').innerHTML = PLANS.map((p) => `
+  <label class="plan"><input type="radio" name="plan" value="${p.id}" ${p.id === state.plan ? 'checked' : ''}>
+    <span><b>${p.name}</b><ul>${p.items.map((i) => `<li>${i}</li>`).join('')}</ul></span>
+    <span class="p">${money(p.price)}</span></label>`).join('');
+$('addons').innerHTML = ADDONS.map((a) => `
+  <div class="addon">
+    <div><div class="name">${a.name}　<span style="font-weight:400; font-variant-numeric: tabular-nums">${money(a.price)}／${a.unit}</span></div><div class="desc">${a.desc}</div></div>
+    <div class="stepper"><button type="button" data-dec="${a.id}" aria-label="${a.name} 減少">−</button><output id="o-${a.id}">0</output><button type="button" data-inc="${a.id}" aria-label="${a.name} 增加">+</button></div>
+  </div>`).join('');
+
+function lines() {
+  const p = PLANS.find((x) => x.id === state.plan);
+  const out = [{ name: p.name, sub: p.items.join('、'), amount: p.price }];
+  ADDONS.forEach((a) => { const n = state.qty[a.id]; if (n) out.push({ name: `${a.name} × ${n} ${a.unit}`, sub: `${money(a.price)}／${a.unit}`, amount: a.price * n }); });
+  return { p, out };
+}
+function calc() {
+  const { p, out } = lines();
+  const sub = out.reduce((s, x) => s + x.amount, 0);
+  const rush = $('rush').checked ? Math.round(sub * RUSH_RATE) : 0;
+  const total = sub + rush;
+  const deposit = Math.round(total / 2);
+  const extraWeeks = Math.ceil((state.qty.page + state.qty.art) / 3);
+  let weeks = p.weeks + extraWeeks;
+  if ($('rush').checked) weeks = Math.max(1, Math.round(weeks * 2 / 3));
+  return { p, out, sub, rush, total, deposit, balance: total - deposit, weeks };
+}
+function render() {
+  const c = calc();
+  const valid = new Date(today); valid.setDate(valid.getDate() + VALID_DAYS);
+  $('qNo').textContent = quoteNo; $('qDate').textContent = fmt(today); $('qValid').textContent = fmt(valid) + '（' + VALID_DAYS + ' 天）';
+  $('qClient').textContent = $('client').value.trim() || '（尚未填寫）';
+  $('qTime').textContent = '約 ' + c.weeks + ' 週（收到訂金與素材後開始計算）';
+  $('qItems').innerHTML = c.out.map((x) => `<tr><td>${x.name}<small>${x.sub}</small></td><td>${money(x.amount)}</td></tr>`).join('');
+  $('qSub').textContent = money(c.sub);
+  $('qRushRow').hidden = !c.rush; $('qRush').textContent = money(c.rush);
+  $('qTotal').textContent = money(c.total);
+  $('qDeposit').textContent = money(c.deposit); $('qBalance').textContent = money(c.balance);
+  ADDONS.forEach((a) => {
+    $('o-' + a.id).textContent = state.qty[a.id];
+    document.querySelector(`[data-dec="${a.id}"]`).disabled = state.qty[a.id] <= 0;
+    document.querySelector(`[data-inc="${a.id}"]`).disabled = state.qty[a.id] >= a.max;
+  });
+}
+function asText() {
+  const c = calc();
+  return [
+    '【喵境 預估報價單】',
+    '報價編號：' + quoteNo, '報價日期：' + fmt(today),
+    '品牌：' + ($('client').value.trim() || '（尚未填寫）'),
+    '', ...c.out.map((x) => '・' + x.name + '　' + money(x.amount)),
+    c.rush ? '・急件加價 30%　' + money(c.rush) : '',
+    '', '總計：' + money(c.total),
+    '訂金 50%：' + money(c.deposit) + '　尾款 50%：' + money(c.balance),
+    '預估工期：約 ' + c.weeks + ' 週',
+    '', '含 3 次修改、上線後 14 天內免費調整、免費架站在 GitHub Pages；不含網站刷卡購物車系統、自己的網域費、市集或金流手續費。'
+  ].filter((x, i, arr) => x !== '' || arr[i - 1] !== '').join('\n');
+}
+
+document.addEventListener('change', (e) => { if (e.target.name === 'plan') { state.plan = e.target.value; render(); } if (e.target.id === 'rush') render(); });
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('button'); if (!b) return;
+  const a = ADDONS.find((x) => x.id === (b.dataset.inc || b.dataset.dec)); if (!a) return;
+  const step = a.step || 1;
+  state.qty[a.id] = Math.min(a.max, Math.max(0, state.qty[a.id] + (b.dataset.inc ? step : -step)));
+  render();
+});
+$('client').addEventListener('input', render);
+$('copy').addEventListener('click', () => {
+  const text = asText();
+  const fallback = () => {
+    const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+    ta.remove(); $('status').textContent = ok ? '已複製，可以直接貼到 IG 私訊。' : '這個瀏覽器不能自動複製，請直接截圖報價單。';
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => { $('status').textContent = '已複製，可以直接貼到 IG 私訊。'; }).catch(fallback);
+  } else fallback();
+});
+$('print').addEventListener('click', () => { $('status').textContent = '在列印視窗裡，選「另存為 PDF」就能存成檔案。'; window.print(); });
+render();
+</script>
+</body>
+</html>

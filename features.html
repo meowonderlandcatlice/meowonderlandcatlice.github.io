@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>功能展示｜喵境 MEOWONDERLAND</title>
+<meta name="description" content="喵境可以幫你的商店加上的功能：規格選擇、購物車、優惠碼、免運進度條、倒數計時、篩選搜尋等，每一個都可以直接操作。">
+<style>
+/* Layout: plain catalogue of working demos — one card per feature, 1 col on phone, 2 cols on desktop */
+:root {
+  --bg: #F7F3FA; --surface: #FFFFFF; --ink: #3A2846; --muted: #6E5A7C; --line: #E4D8EC;
+  --rose: #E7A9C0; --rose-deep: #B4476F; --gold: #B88A2E; --ok: #2F7D5B; --glow: rgba(231,169,192,.6);
+  --display: "Noto Serif TC", "Noto Serif CJK TC", "Songti TC", serif;
+  --body: "Noto Sans TC", "Noto Sans CJK TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.6; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+.site-nav { background: var(--ink); }
+.site-nav .wrap { display: flex; gap: 4px 18px; flex-wrap: wrap; align-items: center; padding-block: 10px; }
+.site-nav b { font-family: var(--display); color: #F6D9E4; margin-right: auto; letter-spacing: 2px; }
+.site-nav a { color: #E7D9EC; text-decoration: none; font-size: 14px; padding-block: 8px; }
+.site-nav a[aria-current="page"] { color: #FFFFFF; font-weight: 700; border-bottom: 2px solid var(--rose); }
+
+.intro { padding-block: 36px 20px; display: grid; gap: 10px; }
+.intro p { margin: 0; color: var(--muted); max-width: 40em; }
+.intro h1 { font-size: clamp(28px, 5vw, 40px); }
+.toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.toc a { font-size: 13px; padding: 6px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
+
+.grid { display: grid; grid-template-columns: 1fr; gap: 16px; padding-block: 12px 48px; }
+@media (min-width: 820px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.demo { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 12px; align-content: start; min-width: 0; scroll-margin-top: 16px; }
+.demo header { display: grid; gap: 2px; }
+.demo .no { font-size: 12px; color: var(--gold); letter-spacing: 3px; font-weight: 700; }
+.demo h2 { font-size: 20px; }
+.demo .use { margin: 0; font-size: 13px; color: var(--muted); }
+.stage { background: var(--bg); border-radius: 10px; padding: 16px; display: grid; gap: 12px; min-width: 0; }
+
+.btn { min-height: 44px; padding: 0 18px; border-radius: 999px; border: 0; background: var(--ink); color: #FFFFFF; font-weight: 700; }
+.btn.light { background: var(--surface); color: var(--ink); border: 1.5px solid var(--ink); }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.small { font-size: 13px; color: var(--muted); margin: 0; }
+
+/* 01 glow */
+.glow-btn { min-height: 48px; padding: 0 26px; border-radius: 999px; border: 0; background: var(--rose); color: #3A2846; font-weight: 700; transition: box-shadow .25s ease, transform .25s ease; }
+.glow-btn:hover, .glow-btn:focus-visible, .glow-btn.on { box-shadow: 0 0 18px 6px var(--glow), 0 0 40px 10px rgba(227,183,90,.35); transform: translateY(-1px); }
+.plain-btn { min-height: 48px; padding: 0 26px; border-radius: 8px; border: 0; background: #9C96A6; color: #FFFFFF; font-weight: 700; }
+
+/* 02 lift */
+.lift-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.lift { border: 0; background: var(--surface); border-radius: 12px; padding: 8px; display: grid; gap: 6px; font-size: 13px; font-weight: 700; transition: transform .25s ease, box-shadow .25s ease; }
+.lift i { display: block; aspect-ratio: 1; border-radius: 8px; }
+.lift:hover, .lift:focus-visible { transform: translateY(-8px); box-shadow: 0 14px 22px -12px rgba(58,40,70,.5), 0 0 0 3px var(--gold); }
+
+/* pills */
+.pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.pill { min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); font-size: 14px; }
+.pill[aria-pressed="true"] { border-color: var(--rose-deep); background: #FBE9F0; font-weight: 700; }
+.pill:disabled { text-decoration: line-through; opacity: .45; cursor: not-allowed; }
+.price { font-weight: 700; font-variant-numeric: tabular-nums; font-size: 20px; }
+.price s { color: var(--muted); font-weight: 400; font-size: 14px; margin-left: 6px; }
+
+/* qty */
+.qty { display: inline-flex; align-items: center; border: 1.5px solid var(--line); border-radius: 999px; background: var(--surface); }
+.qty button { width: 44px; height: 44px; border: 0; background: none; font-size: 20px; }
+.qty button:disabled { opacity: .3; cursor: not-allowed; }
+.qty output { min-width: 32px; text-align: center; font-variant-numeric: tabular-nums; font-weight: 700; }
+.warn { color: var(--rose-deep); font-size: 13px; margin: 0; min-height: 1.4em; }
+
+/* cart badge */
+.cart-icon { position: relative; width: 48px; height: 48px; border-radius: 50%; background: var(--surface); border: 1.5px solid var(--line); display: grid; place-items: center; }
+.cart-icon .badge { position: absolute; top: -4px; right: -4px; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: var(--rose-deep); color: #FFFFFF; font-size: 12px; font-weight: 700; display: grid; place-items: center; font-variant-numeric: tabular-nums; }
+.badge.pop { animation: pop .4s ease; }
+@keyframes pop { 50% { transform: scale(1.4); } }
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: #FFFFFF; padding: 12px 20px; border-radius: 999px; font-size: 14px; z-index: 50; box-shadow: 0 10px 30px -10px rgba(0,0,0,.4); animation: toastIn .3s ease; max-width: calc(100% - 32px); }
+@keyframes toastIn { from { opacity: 0; transform: translate(-50%, 12px); } }
+
+/* heart */
+.heart { width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--surface); display: grid; place-items: center; }
+.heart svg { width: 26px; height: 26px; transition: transform .2s ease; }
+.heart[aria-pressed="true"] svg { animation: beat .4s ease; }
+.heart[aria-pressed="true"] path { fill: var(--rose-deep); stroke: var(--rose-deep); }
+@keyframes beat { 40% { transform: scale(1.35); } }
+
+/* progress */
+.bar { height: 12px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--rose), var(--rose-deep)); border-radius: 999px; transition: width .3s ease; }
+input[type="range"] { width: 100%; accent-color: var(--rose-deep); }
+.done-msg { color: var(--ok); font-weight: 700; }
+
+/* coupon */
+.field { display: grid; gap: 6px; }
+.field label { font-size: 14px; font-weight: 700; }
+.field input { min-height: 46px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--surface); padding: 0 12px; min-width: 0; }
+.field input.bad { border-color: var(--rose-deep); }
+.field input.good { border-color: var(--ok); }
+.inline { display: flex; gap: 8px; }
+.inline input { flex: 1; }
+.msg { font-size: 13px; margin: 0; min-height: 1.4em; }
+.msg.ok { color: var(--ok); }
+.msg.no { color: var(--rose-deep); }
+
+/* countdown */
+.clock { display: flex; gap: 8px; }
+.clock div { background: var(--ink); color: #FFFFFF; border-radius: 10px; padding: 8px 0; width: 64px; text-align: center; }
+.clock b { display: block; font-family: var(--display); font-size: 26px; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.clock small { font-size: 11px; opacity: .8; }
+
+/* carousel */
+.carousel { position: relative; overflow: hidden; border-radius: 12px; touch-action: pan-y; }
+.track { display: flex; transition: transform .45s ease; }
+.slide { flex: 0 0 100%; aspect-ratio: 16 / 10; display: grid; place-items: center; position: relative; }
+.slide svg { width: 46%; max-width: 200px; }
+.slide span { position: absolute; left: 12px; bottom: 10px; background: rgba(255,255,255,.85); padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+.arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255,255,255,.9); font-size: 18px; }
+.arrow.prev { left: 8px; } .arrow.next { right: 8px; }
+.cdots { display: flex; justify-content: center; gap: 4px; }
+.cdots button { width: 28px; height: 28px; border: 0; background: none; display: grid; place-items: center; padding: 0; }
+.cdots button::after { content: ""; width: 8px; height: 8px; border-radius: 4px; background: var(--line); transition: width .3s; }
+.cdots button[aria-current="true"]::after { width: 20px; background: var(--rose-deep); }
+
+/* filter list */
+.tools { display: grid; gap: 10px; }
+.tools select { min-height: 44px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--surface); padding: 0 10px; }
+.plist { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.plist li { display: flex; justify-content: space-between; gap: 10px; background: var(--surface); border-radius: 8px; padding: 10px 12px; font-size: 14px; }
+.plist li em { font-style: normal; font-size: 12px; color: var(--muted); }
+.plist li b { font-variant-numeric: tabular-nums; }
+.empty { text-align: center; color: var(--muted); font-size: 14px; padding: 12px; }
+
+/* tabs */
+.tablist { display: flex; gap: 4px; border-bottom: 1.5px solid var(--line); overflow-x: auto; }
+.tablist button { min-height: 44px; padding: 0 14px; border: 0; background: none; font-weight: 700; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -1.5px; white-space: nowrap; }
+.tablist button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--rose-deep); }
+.tabpanel { font-size: 14px; }
+.tabpanel p { margin: 0; }
+
+/* faq */
+details { background: var(--surface); border-radius: 10px; border: 1px solid var(--line); }
+summary { min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 14px; cursor: pointer; font-weight: 700; font-size: 15px; list-style: none; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; font-size: 20px; color: var(--rose-deep); transition: transform .2s; }
+details[open] summary::after { transform: rotate(45deg); }
+details p { margin: 0; padding: 0 14px 14px; font-size: 14px; color: var(--muted); }
+
+/* stock */
+.stock { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; }
+.stock i { width: 10px; height: 10px; border-radius: 50%; background: var(--ok); }
+.stock.low i { background: #D9822B; }
+.stock.out i { background: var(--rose-deep); }
+
+/* to top */
+.to-top { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); width: 52px; height: 52px; border-radius: 50%; border: 0; background: var(--ink); color: #FFFFFF; font-size: 20px; box-shadow: 0 8px 20px -8px rgba(0,0,0,.4); z-index: 40; }
+
+footer { border-top: 1px solid var(--line); padding-block: 24px 80px; color: var(--muted); font-size: 13px; }
+footer a { color: var(--rose-deep); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<nav class="site-nav" aria-label="網站選單"><div class="wrap">
+  <b>喵境</b>
+  <a href="index.html">示範店・雲朵茶會</a>
+  <a href="features.html" aria-current="page">功能展示</a>
+  <a href="services.html">服務與開店方式</a>
+  <a href="quote.html">報價</a>
+</div></nav>
+
+<header class="wrap intro">
+  <h1>功能展示</h1>
+  <p>這一頁放的是可以加進你品牌網站裡的功能。版面刻意做得很簡單，重點是每一個都能直接按、直接試。看到喜歡的，報價時跟我說編號就好。</p>
+  <p>小提醒：購物車、優惠碼、免運進度條這幾個，在品牌網站上是「展示和引導」用的，真正的付款會接到你的蝦皮、Pinkoi、私訊或免費開店方案完成。詳細可以看 <a href="services.html" style="color: var(--rose-deep)">服務與開店方式</a>。</p>
+  <nav class="toc" aria-label="功能目錄">
+    <a href="#f01">01 發光按鈕</a><a href="#f02">02 商品浮起</a><a href="#f03">03 規格選擇</a><a href="#f04">04 數量與庫存</a>
+    <a href="#f05">05 加入購物車</a><a href="#f06">06 收藏愛心</a><a href="#f07">07 免運進度條</a><a href="#f08">08 優惠碼</a>
+    <a href="#f09">09 限時倒數</a><a href="#f10">10 圖片輪播</a><a href="#f11">11 篩選排序搜尋</a><a href="#f12">12 商品頁籤</a>
+    <a href="#f13">13 常見問題</a><a href="#f14">14 表單即時檢查</a><a href="#f15">15 回到頂端</a>
+  </nav>
+</header>
+
+<main class="wrap grid">
+
+  <section class="demo" id="f01">
+    <header><span class="no">FEATURE 01</span><h2>發光按鈕</h2><p class="use">適合用在：加入購物車、立即購買等最重要的按鈕</p></header>
+    <div class="stage">
+      <div class="row"><button class="plain-btn" type="button">加入購物車</button><button class="glow-btn" type="button" id="glowBtn">加入購物車 ✦</button></div>
+      <p class="small">滑鼠移到右邊按鈕上，或在手機上點一下，看看光暈。</p>
+    </div>
+  </section>
+
+  <section class="demo" id="f02">
+    <header><span class="no">FEATURE 02</span><h2>商品卡片浮起</h2><p class="use">適合用在：商品列表，讓客人知道「這個可以點」</p></header>
+    <div class="stage">
+      <div class="lift-row">
+        <button class="lift" type="button"><i style="background:#F6B9CE"></i>馬卡龍</button>
+        <button class="lift" type="button"><i style="background:#C9B3E6"></i>磅蛋糕</button>
+        <button class="lift" type="button"><i style="background:#FFD2B8"></i>香氛蠟燭</button>
+      </div>
+      <p class="small">滑鼠移上去或按 Tab 鍵選到時，卡片會往上浮並加一圈金邊。</p>
+    </div>
+  </section>
+
+  <section class="demo" id="f03">
+    <header><span class="no">FEATURE 03</span><h2>規格選擇，價格跟著變</h2><p class="use">適合用在：有口味、尺寸、顏色的商品</p></header>
+    <div class="stage">
+      <div><p class="small">口味</p><div class="pills" id="flavor" role="group" aria-label="口味"></div></div>
+      <div><p class="small">盒裝</p><div class="pills" id="size" role="group" aria-label="盒裝"></div></div>
+      <div class="price" id="specPrice" aria-live="polite"></div>
+      <p class="small">「抹茶」目前售完，按鈕會自動變灰、不能選。</p>
+    </div>
+  </section>
+
+  <section class="demo" id="f04">
+    <header><span class="no">FEATURE 04</span><h2>數量加減與庫存上限</h2><p class="use">適合用在：限量商品、手作商品</p></header>
+    <div class="stage">
+      <div class="row"><div class="qty"><button type="button" id="qMinus" aria-label="減少">−</button><output id="qOut">1</output><button type="button" id="qPlus" aria-label="增加">+</button></div>
+      <div class="stock low" id="stock"><i></i><span>只剩 5 件</span></div></div>
+      <p class="warn" id="qWarn" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section class="demo" id="f05">
+    <header><span class="no">FEATURE 05</span><h2>加入購物車＋數字跳動＋提示</h2><p class="use">適合用在：每一間店，讓客人確定有加成功</p></header>
+    <div class="stage">
+      <div class="row">
+        <button class="btn" type="button" id="addCart">加入購物車</button>
+        <div class="cart-icon" aria-label="購物車"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 4h2l2.4 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg><span class="badge" id="cartBadge" aria-live="polite">0</span></div>
+        <button class="btn light" type="button" id="clearCart">清空</button>
+      </div>
+      <p class="small">按下後右上角數字會跳一下，畫面下方跳出提示。</p>
+    </div>
+  </section>
+
+  <section class="demo" id="f06">
+    <header><span class="no">FEATURE 06</span><h2>收藏愛心</h2><p class="use">適合用在：客人還沒決定買，先收藏起來</p></header>
+    <div class="stage">
+      <div class="row"><button class="heart" type="button" id="heart" aria-pressed="false" aria-label="加入收藏"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" fill="none" stroke="#3A2846" stroke-width="1.8"/></svg></button>
+      <span id="heartText" class="small">已有 128 人收藏</span></div>
+    </div>
+  </section>
+
+  <section class="demo" id="f07">
+    <header><span class="no">FEATURE 07</span><h2>免運進度條</h2><p class="use">適合用在：購物車頁，鼓勵客人多買一點湊免運</p></header>
+    <div class="stage">
+      <p id="shipText" aria-live="polite" style="margin: 0; font-weight: 700"></p>
+      <div class="bar" aria-hidden="true"><span id="shipBar"></span></div>
+      <label class="small" for="shipRange">拉拉看：購物車金額 <b id="shipAmt"></b></label>
+      <input type="range" id="shipRange" min="0" max="1500" step="50" value="650">
+    </div>
+  </section>
+
+  <section class="demo" id="f08">
+    <header><span class="no">FEATURE 08</span><h2>優惠碼即時檢查</h2><p class="use">適合用在：活動折扣、新會員優惠</p></header>
+    <div class="stage">
+      <div class="field"><label for="coupon">輸入優惠碼（試試看 MEOW10）</label>
+        <div class="inline"><input id="coupon" autocomplete="off" placeholder="例如 MEOW10"><button class="btn" type="button" id="applyCoupon">套用</button></div></div>
+      <p class="msg" id="couponMsg" aria-live="polite"></p>
+      <div class="row" style="justify-content: space-between"><span>小計 NT$880</span><span class="price" id="couponTotal">NT$880</span></div>
+    </div>
+  </section>
+
+  <section class="demo" id="f09">
+    <header><span class="no">FEATURE 09</span><h2>限時優惠倒數</h2><p class="use">適合用在：檔期活動、限時折扣</p></header>
+    <div class="stage">
+      <p class="small">今日限定，倒數到今晚 23:59:59</p>
+      <div class="clock" aria-live="off"><div><b id="cH">00</b><small>時</small></div><div><b id="cM">00</b><small>分</small></div><div><b id="cS">00</b><small>秒</small></div></div>
+    </div>
+  </section>
+
+  <section class="demo" id="f10">
+    <header><span class="no">FEATURE 10</span><h2>圖片輪播</h2><p class="use">適合用在：商品多角度照片、首頁活動橫幅</p></header>
+    <div class="stage">
+      <div class="carousel" id="carousel" aria-roledescription="輪播" aria-label="商品照片">
+        <div class="track" id="track">
+          <div class="slide" style="background:#FCE3EC"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M18 62 Q18 46 50 46 Q82 46 82 62 Q82 70 50 70 Q18 70 18 62 Z" fill="#F29BBA"/><rect x="20" y="58" width="60" height="9" rx="4.5" fill="#FFF6EE"/><path d="M18 54 Q18 34 50 34 Q82 34 82 54 Q82 60 50 60 Q18 60 18 54 Z" fill="#F6B9CE"/><path d="M18 74 Q18 66 50 66 Q82 66 82 74 Q82 80 50 80 Q18 80 18 74 Z" fill="#F6B9CE"/></svg><span>1 / 3 正面</span></div>
+          <div class="slide" style="background:#EDE4F7"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M14 48 Q14 34 34 34 H66 Q86 34 86 48 V80 H14 Z" fill="#E8C48E"/><path d="M14 48 Q14 34 34 34 H66 Q86 34 86 48 V52 H14 Z" fill="#C9935A"/><path d="M18 40 Q26 50 32 40 Q38 54 46 40 Q52 52 60 40 Q66 50 74 40 Q80 48 84 42" fill="none" stroke="#C9B3E6" stroke-width="5" stroke-linecap="round"/></svg><span>2 / 3 切面</span></div>
+          <div class="slide" style="background:#FFF1E6"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 8 Q58 18 50 26 Q42 18 50 8 Z" fill="#FFB44D"/><rect x="26" y="34" width="48" height="50" rx="10" fill="#FFFFFF"/><rect x="30" y="40" width="40" height="40" rx="7" fill="#FFD2B8"/></svg><span>3 / 3 包裝</span></div>
+        </div>
+        <button class="arrow prev" type="button" id="cPrev" aria-label="上一張">‹</button>
+        <button class="arrow next" type="button" id="cNext" aria-label="下一張">›</button>
+      </div>
+      <div class="cdots" id="cDots"></div>
+      <p class="small">可以按箭頭、按下方圓點，或在手機上左右滑。</p>
+    </div>
+  </section>
+
+  <section class="demo" id="f11">
+    <header><span class="no">FEATURE 11</span><h2>分類篩選、價格排序、即時搜尋</h2><p class="use">適合用在：商品超過 10 樣的店</p></header>
+    <div class="stage">
+      <div class="tools">
+        <div class="field"><label for="search">搜尋商品</label><input id="search" type="search" placeholder="例如：蠟燭、草莓" autocomplete="off"></div>
+        <div class="pills" id="cats" role="group" aria-label="分類"></div>
+        <div class="field"><label for="sort">排序</label><select id="sort"><option value="new">最新上架</option><option value="low">價格：低到高</option><option value="high">價格：高到低</option></select></div>
+      </div>
+      <ul class="plist" id="plist" aria-live="polite"></ul>
+    </div>
+  </section>
+
+  <section class="demo" id="f12">
+    <header><span class="no">FEATURE 12</span><h2>商品頁籤</h2><p class="use">適合用在：商品說明很多，不想讓頁面太長</p></header>
+    <div class="stage">
+      <div class="tablist" role="tablist" aria-label="商品資訊" id="tabs">
+        <button role="tab" id="t1" aria-selected="true" aria-controls="p1" type="button">商品說明</button>
+        <button role="tab" id="t2" aria-selected="false" aria-controls="p2" type="button" tabindex="-1">成分與保存</button>
+        <button role="tab" id="t3" aria-selected="false" aria-controls="p3" type="button" tabindex="-1">運送方式</button>
+      </div>
+      <div class="tabpanel" role="tabpanel" id="p1" aria-labelledby="t1"><p>雲朵棉花糖馬卡龍，6 入一盒，草莓牛奶口味。外殼酥脆，內餡像雲一樣柔軟。</p></div>
+      <div class="tabpanel" role="tabpanel" id="p2" aria-labelledby="t2" hidden><p>杏仁粉、砂糖、蛋白、草莓果泥、鮮奶油。請冷藏保存，收到後 5 天內食用完畢。</p></div>
+      <div class="tabpanel" role="tabpanel" id="p3" aria-labelledby="t3" hidden><p>冷藏宅配或超商冷藏取貨，下單後 3 個工作天內出貨。</p></div>
+      <p class="small">也可以用鍵盤左右方向鍵切換頁籤。</p>
+    </div>
+  </section>
+
+  <section class="demo" id="f13">
+    <header><span class="no">FEATURE 13</span><h2>常見問題（點開收合）</h2><p class="use">適合用在：運費、退換貨、客製化說明</p></header>
+    <div class="stage">
+      <details><summary>多久會出貨？</summary><p>下單後 3 個工作天內出貨，預購商品依頁面標示時間出貨。</p></details>
+      <details><summary>可以退換貨嗎？</summary><p>食品類因衛生考量，除了商品有瑕疵，恕不接受退換貨。</p></details>
+      <details><summary>可以指定送達日期嗎？</summary><p>宅配可以在備註欄寫希望送達的日期，我們會盡量配合。</p></details>
+    </div>
+  </section>
+
+  <section class="demo" id="f14">
+    <header><span class="no">FEATURE 14</span><h2>表單即時檢查</h2><p class="use">適合用在：結帳、會員註冊、聯絡表單</p></header>
+    <form class="stage" id="form" novalidate>
+      <div class="field"><label for="fEmail">Email</label><input id="fEmail" type="email" autocomplete="off" placeholder="name@example.com"><p class="msg" id="mEmail" aria-live="polite"></p></div>
+      <div class="field"><label for="fPhone">手機號碼</label><input id="fPhone" inputmode="numeric" autocomplete="off" placeholder="09 開頭共 10 碼"><p class="msg" id="mPhone" aria-live="polite"></p></div>
+      <p class="small">邊打字邊檢查，錯了馬上告訴客人怎麼改，不用等按送出。示範用，不會送出任何資料。</p>
+    </form>
+  </section>
+
+  <section class="demo" id="f15">
+    <header><span class="no">FEATURE 15</span><h2>回到頂端按鈕</h2><p class="use">適合用在：很長的商品列表或部落格文章</p></header>
+    <div class="stage"><p class="small" style="margin: 0">往下滑一段距離後，右下角會出現一顆圓形按鈕，按一下就回到最上面。你現在應該就看得到它。</p></div>
+  </section>
+
+</main>
+
+<footer><div class="wrap">喵境 MEOWONDERLAND ・ 這些功能都可以依你的品牌風格重新設計 ・ <a href="quote.html">看看報價</a> ・ IG @meowonderlandcatlice</div></footer>
+
+<button class="to-top" type="button" id="toTop" hidden aria-label="回到頂端">↑</button>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const money = (n) => 'NT$' + n.toLocaleString('en-US');
+function toast(text) {
+  document.querySelectorAll('.toast').forEach((t) => t.remove());
+  const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); t.textContent = text;
+  document.body.appendChild(t); setTimeout(() => t.remove(), 2200);
+}
+
+// 01 glow on tap for touch devices
+$('glowBtn').addEventListener('click', (e) => { e.currentTarget.classList.toggle('on'); });
+
+// 03 spec select
+const FLAVORS = [{ id: 'straw', label: '草莓牛奶' }, { id: 'earl', label: '伯爵茶' }, { id: 'matcha', label: '抹茶', soldout: true }];
+const SIZES = [{ id: 6, label: '6 入', price: 320 }, { id: 12, label: '12 入', price: 600, was: 640 }];
+let flavor = 'straw', size = 6;
+function renderSpec() {
+  $('flavor').innerHTML = FLAVORS.map((f) => `<button type="button" class="pill" data-flavor="${f.id}" aria-pressed="${f.id === flavor}" ${f.soldout ? 'disabled aria-label="' + f.label + '（售完）"' : ''}>${f.label}${f.soldout ? '・售完' : ''}</button>`).join('');
+  $('size').innerHTML = SIZES.map((s) => `<button type="button" class="pill" data-size="${s.id}" aria-pressed="${s.id === size}">${s.label}</button>`).join('');
+  const s = SIZES.find((x) => x.id === size);
+  $('specPrice').innerHTML = money(s.price) + (s.was ? `<s>${money(s.was)}</s>` : '');
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.flavor) { flavor = b.dataset.flavor; renderSpec(); }
+  if (b.dataset.size) { size = Number(b.dataset.size); renderSpec(); }
+  if (b.dataset.cat !== undefined) { cat = b.dataset.cat; renderList(); }
+});
+renderSpec();
+
+// 04 qty
+const STOCK = 5; let q = 1;
+function renderQty() {
+  $('qOut').textContent = q; $('qMinus').disabled = q <= 1; $('qPlus').disabled = q >= STOCK;
+  $('qWarn').textContent = q >= STOCK ? '已經是最後 5 件了，沒辦法再多囉。' : '';
+}
+$('qMinus').addEventListener('click', () => { if (q > 1) { q--; renderQty(); } });
+$('qPlus').addEventListener('click', () => { if (q < STOCK) { q++; renderQty(); } });
+renderQty();
+
+// 05 cart
+let cartN = 0;
+$('addCart').addEventListener('click', () => {
+  cartN++; const b = $('cartBadge'); b.textContent = cartN; b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
+  toast('已加入購物車，目前共 ' + cartN + ' 件');
+});
+$('clearCart').addEventListener('click', () => { cartN = 0; $('cartBadge').textContent = 0; toast('購物車已清空'); });
+
+// 06 heart
+let fav = 128;
+$('heart').addEventListener('click', (e) => {
+  const on = e.currentTarget.getAttribute('aria-pressed') !== 'true';
+  e.currentTarget.setAttribute('aria-pressed', String(on));
+  e.currentTarget.setAttribute('aria-label', on ? '取消收藏' : '加入收藏');
+  fav += on ? 1 : -1; $('heartText').textContent = (on ? '你和另外 ' + (fav - 1) + ' 人收藏了' : '已有 ' + fav + ' 人收藏');
+});
+
+// 07 free shipping
+const FREE = 1000;
+function renderShip() {
+  const v = Number($('shipRange').value);
+  $('shipAmt').textContent = money(v);
+  $('shipBar').style.width = Math.min(v / FREE, 1) * 100 + '%';
+  $('shipText').innerHTML = v >= FREE ? '<span class="done-msg">已達免運門檻，這筆免運費 ✓</span>' : '再買 <b>' + money(FREE - v) + '</b> 就免運！';
+}
+$('shipRange').addEventListener('input', renderShip); renderShip();
+
+// 08 coupon
+$('applyCoupon').addEventListener('click', () => {
+  const code = $('coupon').value.trim().toUpperCase();
+  const ok = code === 'MEOW10';
+  $('coupon').classList.toggle('good', ok); $('coupon').classList.toggle('bad', !ok);
+  if (!code) { $('couponMsg').className = 'msg no'; $('couponMsg').textContent = '請先輸入優惠碼。'; return; }
+  $('couponMsg').className = 'msg ' + (ok ? 'ok' : 'no');
+  $('couponMsg').textContent = ok ? '套用成功，享 9 折優惠，省下 NT$88。' : '找不到「' + code + '」這組優惠碼，請確認大小寫或是否已過期。';
+  $('couponTotal').textContent = ok ? 'NT$792' : 'NT$880';
+});
+$('coupon').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('applyCoupon').click(); });
+
+// 09 countdown
+function tick() {
+  const now = new Date(); const end = new Date(now); end.setHours(23, 59, 59, 999);
+  let s = Math.max(0, Math.floor((end - now) / 1000));
+  const pad = (n) => String(n).padStart(2, '0');
+  $('cH').textContent = pad(Math.floor(s / 3600)); $('cM').textContent = pad(Math.floor(s % 3600 / 60)); $('cS').textContent = pad(s % 60);
+}
+tick(); setInterval(tick, 1000);
+
+// 10 carousel
+const slides = document.querySelectorAll('.slide'); let ci = 0;
+$('cDots').innerHTML = [...slides].map((_, i) => `<button type="button" data-ci="${i}" aria-label="第 ${i + 1} 張"></button>`).join('');
+function goSlide(i) {
+  ci = (i + slides.length) % slides.length;
+  $('track').style.transform = `translateX(-${ci * 100}%)`;
+  [...$('cDots').children].forEach((d, k) => d.setAttribute('aria-current', String(k === ci)));
+}
+$('cPrev').addEventListener('click', () => goSlide(ci - 1));
+$('cNext').addEventListener('click', () => goSlide(ci + 1));
+$('cDots').addEventListener('click', (e) => { const b = e.target.closest('[data-ci]'); if (b) goSlide(Number(b.dataset.ci)); });
+let sx = null;
+$('carousel').addEventListener('pointerdown', (e) => { sx = e.clientX; });
+$('carousel').addEventListener('pointerup', (e) => { if (sx === null) return; const dx = e.clientX - sx; sx = null; if (Math.abs(dx) > 40) goSlide(ci + (dx < 0 ? 1 : -1)); });
+goSlide(0);
+
+// 11 filter / sort / search
+const LIST = [
+  { name: '雲朵棉花糖馬卡龍', cat: '甜點', price: 320, order: 6, tags: '草莓 牛奶' },
+  { name: '薰衣草伯爵磅蛋糕', cat: '甜點', price: 380, order: 5, tags: '伯爵 茶' },
+  { name: '星星糖霜餅乾', cat: '甜點', price: 420, order: 4, tags: '餅乾' },
+  { name: '月光白桃香氛蠟燭', cat: '香氛', price: 560, order: 3, tags: '蠟燭 白桃' },
+  { name: '玫瑰荔枝擴香瓶', cat: '香氛', price: 680, order: 2, tags: '擴香 玫瑰' },
+  { name: '午後茶會小禮盒', cat: '禮盒', price: 880, order: 1, tags: '送禮 蠟燭 馬卡龍' }
+];
+let cat = '';
+const CATS = ['', '甜點', '香氛', '禮盒'];
+function renderList() {
+  $('cats').innerHTML = CATS.map((c) => `<button type="button" class="pill" data-cat="${c}" aria-pressed="${c === cat}">${c || '全部'}</button>`).join('');
+  const kw = $('search').value.trim();
+  let rows = LIST.filter((p) => (!cat || p.cat === cat) && (!kw || (p.name + p.tags).includes(kw)));
+  const s = $('sort').value;
+  rows.sort((a, b) => s === 'low' ? a.price - b.price : s === 'high' ? b.price - a.price : b.order - a.order);
+  $('plist').innerHTML = rows.length ? rows.map((p) => `<li><span>${p.name}<br><em>${p.cat}</em></span><b>${money(p.price)}</b></li>`).join('') : '<li class="empty">找不到符合的商品，換個關鍵字試試看。</li>';
+}
+$('search').addEventListener('input', renderList); $('sort').addEventListener('change', renderList); renderList();
+
+// 12 tabs
+const tabs = [...document.querySelectorAll('[role="tab"]')];
+function selectTab(t) {
+  tabs.forEach((x) => { const on = x === t; x.setAttribute('aria-selected', String(on)); x.tabIndex = on ? 0 : -1; $(x.getAttribute('aria-controls')).hidden = !on; });
+  t.focus();
+}
+tabs.forEach((t, i) => {
+  t.addEventListener('click', () => selectTab(t));
+  t.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') selectTab(tabs[(i + 1) % tabs.length]);
+    if (e.key === 'ArrowLeft') selectTab(tabs[(i - 1 + tabs.length) % tabs.length]);
+  });
+});
+
+// 14 live validation
+function check(input, msg, test, good, bad) {
+  input.addEventListener('input', () => {
+    const v = input.value.trim();
+    if (!v) { input.className = ''; msg.textContent = ''; return; }
+    const ok = test(v); input.className = ok ? 'good' : 'bad';
+    msg.className = 'msg ' + (ok ? 'ok' : 'no'); msg.textContent = ok ? good : bad(v);
+  });
+}
+check($('fEmail'), $('mEmail'), (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), 'Email 格式正確 ✓', () => 'Email 要有「@」和網域，例如 name@example.com');
+check($('fPhone'), $('mPhone'), (v) => /^09\d{8}$/.test(v), '手機號碼格式正確 ✓', (v) => /\D/.test(v) ? '只能輸入數字，不用加「-」或空白' : '要 09 開頭、共 10 碼，目前 ' + v.length + ' 碼');
+$('form').addEventListener('submit', (e) => e.preventDefault());
+
+// 15 to top
+window.addEventListener('scroll', () => { $('toTop').hidden = window.scrollY < 600; }, { passive: true });
+$('toTop').addEventListener('click', () => window.scrollTo({ top: 0 }));
+</script>
+</body>
+</html>
